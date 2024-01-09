@@ -35,7 +35,14 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
           itemCount: 15,
           itemBuilder: (c, i) => Padding(
             padding: EdgeInsets.all(5),
-            child: ProjectTile(),
+            child: ProjectTile(
+              deadline: "2-3 weeks",
+              domains: ["web", "android"],
+              postDate: "Posted 2 days ago",
+              priceRange: "5000-10000",
+              projectTitle: "Web3 Freelance",
+              subtext: "change the way you perceive world",
+            ),
           ),
         ))
       ]),
