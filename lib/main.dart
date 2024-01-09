@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3dart/web3dart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,17 +36,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  var _fcontract = FreelanceContractClient();
+  var _fcontract = ProjectOwnerClient();
   // double _balance = -1;
   String _name = "";
   void _incrementCounter() async {
     // double b = await _fcontract.checkBalance();
-    String name = await _fcontract.getName();
-    print(name);
+    // var name = await _fcontract.registerProjectOwner(
+    //     "Sultan",
+    //     "sultan@bolly.com",
+    //     9876543210,
+    //     "ipfs://licence_doc",
+    //     "visionDev",
+    //     "visionDev.com",
+    //     1,
+    //     "ipfs://profile_photo");
+    // print(name);
+    await _fcontract.createProject(
+        projectOwnerCred.address,
+        "Project Web3",
+        "ipfs://ssrdocIpfs",
+        "web",
+        DateTime.now().add(const Duration(days: 2)).millisecond.big,
+        BigInt.from(100000000000000000));
+    // var name = await _fcontract.finalizeProjectBid(
+    //     BigInt.from(10000000000000000),
+    //     BigInt.zero,
+    //     "I gaurantee you ",
+    //     [],
+    //     creds.address);
+    var name = await _fcontract.updateProjectStaus(1);
+
     setState(() {
       // _balance = b;
-      _name = name;
+      _name = name.toString();
     });
   }
 
