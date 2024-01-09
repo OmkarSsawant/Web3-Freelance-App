@@ -210,4 +210,115 @@ function addReview(uint _project_id,string memory _r)
             parameters: [projectId, rev]),
         chainId: 31337);
   }
+
+  addWorkAndPays(
+      BigInt projectId, List<String> works, List<BigInt> pays) async {
+    return await _ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+            contract: _contract,
+            function: _addWorksAndPays,
+            parameters: [projectId, works, pays]));
+  }
+
+  /*
+   function getProjectsOfOwner(
+        address _owner
+    ) 
+   */
+  getProjectsOfOwner(EthereumAddress owner) async {
+    return await _ethClient.call(
+        contract: _contract, function: _getProjectsOfOwner, params: [owner]);
+  }
+
+/*
+    function getProjectStatus(uint project_id) public view returns (WorkStatus) {
+
+  */
+
+  getProjectStatus(BigInt projectId) async {
+    return await _ethClient.call(
+        contract: _contract, function: _getProjectStatus, params: [projectId]);
+  }
+
+/*
+    function registerDeveloper(
+        bytes32 _name,
+        bytes32 _profile_photo_ipfs,
+        bytes32[] memory _techstack,
+        bytes32 _profession
+    )
+    public returns (bool )
+ */
+
+  registerDeveloper(String name, String profilePhotoIpfs,
+      List<String> techstack, String profession) async {
+    return await _ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+            contract: _contract,
+            function: _registerDeveloper,
+            parameters: [
+              name.bytes32,
+              profilePhotoIpfs.bytes32,
+              techstack.map((e) => e.bytes32).toList(),
+              profession.bytes32
+            ]),
+        chainId: 31337);
+  }
+
+  /*
+    function signAgreement(uint project_id) public onlyDev returns (bool _success) {
+   */
+  signAgreement(BigInt projectId) async {
+    return await _ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+            contract: _contract,
+            function: _signAgreement,
+            parameters: [projectId]),
+        chainId: 31337);
+  }
+
+  /*function getProjectsOfDev(
+        address _dev
+    ) */
+  getProjectsOfDev(EthereumAddress dev) async {
+    return await _ethClient
+        .call(contract: _contract, function: _getProjectsOfDev, params: [dev]);
+  }
+
+  /*
+    function getCompletedProjectsCountOfDev(
+        address _dev
+    ) 
+   */
+  getCompletedProjectsCountOfDev(EthereumAddress dev) async {
+    return await _ethClient.call(
+        contract: _contract,
+        function: _getCompletedProjectsCountOfDev,
+        params: [dev]);
+  }
+
+  /*function getDevBidTokens(
+        address dev
+    )*/
+  getDevBidTokens(EthereumAddress dev) async {
+    return await _ethClient
+        .call(contract: _contract, function: _getDevBidTokens, params: [dev]);
+  }
+
+/*   function devPlaceBids(
+        address dev,
+        uint count
+    ) */
+  devPlaceBids(EthereumAddress dev, BigInt count) async {
+    return await _ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+            contract: _contract,
+            function: _devPlaceBids,
+            parameters: [dev, count]),
+        chainId: 31337);
+  }
 }
