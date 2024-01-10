@@ -1,3 +1,5 @@
+import 'package:web3_freelancer/utils.dart';
+
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
-              _buildEightyEight(context),
+              Expanded(child: _buildEightyEight(context)),
             ],
           ),
         ),
@@ -108,7 +110,7 @@ class HomePage extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: SizedBox(
-        height: 176,
+        height: context.screenHeight * 0.25,
         child: ListView.separated(
           padding: EdgeInsets.only(left: 24),
           scrollDirection: Axis.horizontal,
@@ -122,7 +124,7 @@ class HomePage extends StatelessWidget {
           },
           itemCount: 2,
           itemBuilder: (context, index) {
-            return FrameItemWidget();
+            return ProjectRecommendationTileWidget();
           },
         ),
       ),
@@ -135,20 +137,10 @@ class HomePage extends StatelessWidget {
       alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (
-            context,
-            index,
-          ) {
-            return SizedBox(
-              height: 16,
-            );
-          },
-          itemCount: 2,
+        child: ListView.builder(
+          itemCount: 7,
           itemBuilder: (context, index) {
-            return EightyeightItemWidget();
+            return ProjectTileWidget();
           },
         ),
       ),

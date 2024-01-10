@@ -1,11 +1,13 @@
+import 'package:web3_freelancer/utils.dart';
+
 import 'fulltime1_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
-class FrameItemWidget extends StatelessWidget {
-  const FrameItemWidget({Key? key})
+class ProjectRecommendationTileWidget extends StatelessWidget {
+  const ProjectRecommendationTileWidget({Key? key})
       : super(
           key: key,
         );
@@ -72,12 +74,10 @@ class FrameItemWidget extends StatelessWidget {
                       style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
                     ),
                     SizedBox(height: 17),
-                    Wrap(
-                      runSpacing: 7,
-                      spacing: 7,
-                      children: List<Widget>.generate(
-                          2, (index) => Fulltime1ItemWidget()),
-                    ),
+                    FilledButton.icon(
+                        label: const Text("Bid"),
+                        onPressed: () {},
+                        icon: const Icon(Icons.money_outlined)),
                   ],
                 ),
               ),

@@ -4,8 +4,8 @@ import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
-class EightyeightItemWidget extends StatelessWidget {
-  const EightyeightItemWidget({Key? key})
+class ProjectTileWidget extends StatelessWidget {
+  const ProjectTileWidget({Key? key})
       : super(
           key: key,
         );
@@ -83,6 +83,17 @@ class EightyeightItemWidget extends StatelessWidget {
                       spacing: 8,
                       children: List<Widget>.generate(
                           2, (index) => Fulltime3ItemWidget()),
+                    ),
+                    SizedBox(height: 13),
+                    Container(
+                      width: double.infinity,
+                      child: Align(
+                        alignment: AlignmentDirectional.topEnd,
+                        child: FilledButton.icon(
+                            label: const Text("Bid"),
+                            onPressed: () {},
+                            icon: const Icon(Icons.money_outlined)),
+                      ),
                     ),
                   ],
                 ),
