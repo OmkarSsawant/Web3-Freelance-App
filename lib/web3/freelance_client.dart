@@ -19,37 +19,39 @@ var projectOwnerCred = EthPrivateKey.fromHex(
     "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d");
 const String wsUrl = "ws://127.0.0.1:8545/";
 
-class FreelanceContractClient extends ChangeNotifier {
+class FreelanceContractClient {
   late Client _client;
   late Web3Client _ethClient;
   late DeployedContract _contract;
-  late ContractFunction _getName;
-  late ContractFunction _registerProjectOwner;
-  late ContractFunction _finalizeProjectBid;
-  late ContractFunction _updateProjectStatus;
-  late ContractFunction _addReview;
-  late ContractFunction _createProject;
-  late ContractFunction _addWorksAndPays;
-  late ContractFunction _getProjectsOfOwner;
-  late ContractFunction _getProjectStatus;
-  late ContractFunction _registerDeveloper;
-  late ContractFunction _signAgreement;
-  late ContractFunction _getProjectsOfDev;
-  late ContractFunction _getCompletedProjectsCountOfDev;
-  late ContractFunction _getTotalDeposit;
-  late ContractFunction _getDevBidTokens;
-  late ContractFunction _devPlaceBids;
+  late ContractFunction _getName,
+      _registerProjectOwner,
+      _finalizeProjectBid,
+      _updateProjectStatus,
+      _addReview,
+      _createProject,
+      _addWorksAndPays,
+      _getProjectsOfOwner,
+      _getProjectStatus,
+      _registerDeveloper,
+      _signAgreement,
+      _getProjectsOfDev,
+      _getCompletedProjectsCountOfDev,
+      _getTotalDeposit,
+      _getDevBidTokens,
+      _devPlaceBids,
+      _getProjects,
+      _getProjectDetails;
 
-  // Credentials get _creds =>
+  //,Credentials get _creds =>
   FreelanceContractClient() {
     _client = Client();
     _ethClient = Web3Client(apiUrl, _client, socketConnector: () {
       return IOWebSocketChannel.connect(wsUrl).cast<String>();
     });
-    _initContractAndFunctions();
+    initContractAndFunctions();
   }
 
-  void _initContractAndFunctions() async {
+  Future initContractAndFunctions() async {
     print(
         "On ChainId : ${await _ethClient.getChainId()} and on networkId : ${await _ethClient.getNetworkId()}");
     var abi = await loadContractAbi();
@@ -72,6 +74,8 @@ class FreelanceContractClient extends ChangeNotifier {
     _getTotalDeposit = _contract.function("getTotalDeposit");
     _getDevBidTokens = _contract.function("getDevBidTokens");
     _devPlaceBids = _contract.function("devPlaceBids");
+    _getProjects = _contract.function("getProjects");
+    _getProjectDetails = _contract.function("getProjectDetails");
   }
 
   Future<String> getName() async {
@@ -89,9 +93,7 @@ class FreelanceContractClient extends ChangeNotifier {
     var json = await rootBundle.loadString("assets/abis/freelance.abi.json");
     return ContractAbi.fromJson(json, "Freelance");
   }
-}
 
-class ProjectOwnerClient extends FreelanceContractClient {
   /*
         bytes32 _name,
         bytes32 _email,
@@ -219,6 +221,16 @@ function addReview(uint _project_id,string memory _r)
             contract: _contract,
             function: _addWorksAndPays,
             parameters: [projectId, works, pays]));
+  }
+
+  Future<List> getProjects() async {
+    return await _ethClient
+        .call(contract: _contract, function: _getProjects, params: []);
+  }
+
+  Future getProjectDetails() async {
+    return await _ethClient
+        .call(contract: _contract, function: _getProjectDetails, params: []);
   }
 
   /*

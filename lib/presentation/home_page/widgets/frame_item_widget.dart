@@ -1,3 +1,4 @@
+import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/utils.dart';
 
 import 'fulltime1_item_widget.dart';
@@ -7,7 +8,8 @@ import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class ProjectRecommendationTileWidget extends StatelessWidget {
-  const ProjectRecommendationTileWidget({Key? key})
+  final Project project;
+  ProjectRecommendationTileWidget({Key? key, required this.project})
       : super(
           key: key,
         );
@@ -48,14 +50,14 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Senior UI/UX Designer",
+                      project.title,
                       style: CustomTextStyles.titleSmallOnPrimaryContainerBold,
                     ),
                     SizedBox(height: 7),
                     Opacity(
                       opacity: 0.8,
                       child: Text(
-                        "Shopee",
+                        project.owner,
                         style: CustomTextStyles
                             .labelLargeOnPrimaryContainerSemiBold,
                       ),
@@ -64,13 +66,13 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                     Opacity(
                       opacity: 0.64,
                       child: Text(
-                        "Jakarta, Indonesia (Remote)",
+                        project.projectType,
                         style: CustomTextStyles.labelLargeOnPrimaryContainer_1,
                       ),
                     ),
                     SizedBox(height: 9),
                     Text(
-                      "1100 - 12.000/Month",
+                      "${project.deposit} \teth",
                       style: CustomTextStyles.labelLargeOnPrimaryContainer_3,
                     ),
                     SizedBox(height: 17),

@@ -1,4 +1,8 @@
+import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/utils.dart';
+import 'package:web3_freelancer/web3/freelance_client.dart';
 
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
@@ -11,14 +15,52 @@ import 'package:web3_freelancer/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:web3_freelancer/widgets/app_bar/custom_app_bar.dart';
 import 'package:web3_freelancer/widgets/custom_search_view.dart';
 
+Future createDumpProjects(FreelanceContractClient contract) async {
+  await contract.createProject(
+      projectOwnerCred.address,
+      "Project Web3",
+      "ipfs://ssrdocIpfs",
+      "flutter",
+      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
+      BigInt.from(100000000000000000));
+  await contract.createProject(
+      projectOwnerCred.address,
+      "2Project Web3",
+      "ipfs://ssrdocIpfs",
+      "web",
+      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
+      BigInt.from(100000000000000000));
+  return await contract.createProject(
+      projectOwnerCred.address,
+      "3Project Web3",
+      "ipfs://ssrdocIpfs",
+      "android",
+      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
+      BigInt.from(100000000000000000));
+}
+
 // ignore_for_file: must_be_immutable
-class HomePage extends StatelessWidget {
-  HomePage({Key? key})
+class HomePage extends StatefulWidget {
+  final FreelanceContractClient contractClient;
+  HomePage({required this.contractClient, Key? key})
       : super(
           key: key,
         );
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
+  List<Project> projects = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +73,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildAppBar(context),
               SizedBox(height: 30),
               Align(
                 alignment: Alignment.center,
@@ -44,20 +87,20 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 25),
-              Padding(
-                padding: EdgeInsets.only(left: 24),
-                child: Text(
-                  "Recommendation",
-                  style: CustomTextStyles.titleMedium18,
-                ),
-              ),
-              SizedBox(height: 17),
-              _buildFrame(context),
+              //TODO:Integrate recommendation server           // Padding(
+              //   padding: EdgeInsets.only(left: 24),
+              //   child: Text(
+              //     "Recommendation",
+              //     style: CustomTextStyles.titleMedium18,
+              //   ),
+              // ),
+              // SizedBox(height: 17),
+              // _buildFrame(context),
               SizedBox(height: 22),
               Padding(
                 padding: EdgeInsets.only(left: 24),
                 child: Text(
-                  "Recent Jobs",
+                  "Recent Projects",
                   style: theme.textTheme.titleMedium,
                 ),
               ),
@@ -124,7 +167,9 @@ class HomePage extends StatelessWidget {
           },
           itemCount: 2,
           itemBuilder: (context, index) {
-            return ProjectRecommendationTileWidget();
+            return ProjectRecommendationTileWidget(
+              project: Project.sample,
+            );
           },
         ),
       ),
@@ -138,12 +183,43 @@ class HomePage extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: ListView.builder(
-          itemCount: 7,
+          itemCount: projects.length,
           itemBuilder: (context, index) {
-            return ProjectTileWidget();
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => ProjectDetailsScreen(
+                          projectDetails: ProjectDetails(
+                              description: "description",
+                              techstack: ["techstack"],
+                              eligiblityCriteria: "eligiblityCriteria",
+                              roles: ["roles"],
+                              ssrDocIpfs: "ssrDocIpfs"))));
+                },
+                child: ProjectTileWidget(
+                  project: projects[index],
+                ),
+              ),
+            );
           },
         ),
       ),
     );
+  }
+
+  void load() async {
+    final contract = widget.contractClient;
+
+    await Future.delayed(Duration(seconds: 5)); //time to intialize contract
+    await createDumpProjects(contract);
+    debugPrint("Added Projects.");
+    // await Future.delayed(Duration(seconds: 5)); //time to intialize contract
+    contract.getProjects().then((value) {
+      debugPrint(value[0][0].toString());
+      projects = value[0].map<Project>(Project.fromBlockchain).toList();
+      setState(() {});
+    });
   }
 }

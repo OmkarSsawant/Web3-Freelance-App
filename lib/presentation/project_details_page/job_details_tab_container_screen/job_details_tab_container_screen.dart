@@ -1,3 +1,6 @@
+import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/utils.dart';
+
 import '../job_details_tab_container_screen/widgets/framefive_item_widget.dart';
 import '../job_details_tab_container_screen/widgets/jobdetailstabcontainer_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +10,20 @@ import 'package:web3_freelancer/widgets/app_bar/appbar_title.dart';
 import 'package:web3_freelancer/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:web3_freelancer/widgets/app_bar/custom_app_bar.dart';
 
-class JobDetailsTabContainerScreen extends StatefulWidget {
-  const JobDetailsTabContainerScreen({Key? key})
+class ProjectDetailsScreen extends StatefulWidget {
+  final ProjectDetails projectDetails;
+
+  ProjectDetailsScreen({Key? key, required this.projectDetails})
       : super(
           key: key,
         );
 
   @override
-  JobDetailsTabContainerScreenState createState() =>
-      JobDetailsTabContainerScreenState();
+  ProjectDetailsScreenState createState() => ProjectDetailsScreenState();
 }
 
-class JobDetailsTabContainerScreenState
-    extends State<JobDetailsTabContainerScreen> with TickerProviderStateMixin {
+class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
+    with TickerProviderStateMixin {
   late TabController tabviewController;
 
   @override
@@ -34,7 +38,7 @@ class JobDetailsTabContainerScreenState
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: SizedBox(
-          width: double.infinity,
+          width: context.screenWidth,
           child: SingleChildScrollView(
             padding: EdgeInsets.only(top: 30),
             child: SizedBox(
@@ -81,7 +85,7 @@ class JobDetailsTabContainerScreenState
       ),
       centerTitle: true,
       title: AppbarTitle(
-        text: "Job Details",
+        text: " Details",
       ),
       actions: [
         AppbarTrailingImage(

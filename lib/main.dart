@@ -12,8 +12,19 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // testConnections();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +34,19 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: HomePage(
+        contractClient: FreelanceContractClient(),
+      ),
     );
   }
+
+  // void testConnections() async {
+  //   FreelanceContractClient contract = FreelanceContractClient();
+  //   await contract.initContractAndFunctions();
+  //   debugPrint("Name");
+  //   debugPrint(await contract.getName());
+  //   debugPrint((await contract.getProjects()).toString());
+  // }
 }
 
 // class MyHomePage extends StatefulWidget {

@@ -1,29 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3_freelancer/presentation/splash_screen/splash_screen.dart';
-import 'package:web3_freelancer/presentation/onboarding_three_screen/onboarding_three_screen.dart';
-import 'package:web3_freelancer/presentation/sign_up_create_acount_screen/sign_up_create_acount_screen.dart';
-import 'package:web3_freelancer/presentation/sign_up_complete_account_screen/sign_up_complete_account_screen.dart';
-import 'package:web3_freelancer/presentation/job_type_screen/job_type_screen.dart';
-import 'package:web3_freelancer/presentation/speciallization_screen/speciallization_screen.dart';
-import 'package:web3_freelancer/presentation/select_a_country_screen/select_a_country_screen.dart';
-import 'package:web3_freelancer/presentation/login_screen/login_screen.dart';
-import 'package:web3_freelancer/presentation/enter_otp_tab_container_screen/enter_otp_tab_container_screen.dart';
-import 'package:web3_freelancer/presentation/home_container_screen/home_container_screen.dart';
-import 'package:web3_freelancer/presentation/search_screen/search_screen.dart';
-import 'package:web3_freelancer/presentation/job_details_tab_container_screen/job_details_tab_container_screen.dart';
-import 'package:web3_freelancer/presentation/message_action_screen/message_action_screen.dart';
-import 'package:web3_freelancer/presentation/chat_screen/chat_screen.dart';
-import 'package:web3_freelancer/presentation/apply_job_screen/apply_job_screen.dart';
-import 'package:web3_freelancer/presentation/notifications_my_proposals_tab_container_screen/notifications_my_proposals_tab_container_screen.dart';
-import 'package:web3_freelancer/presentation/settings_screen/settings_screen.dart';
-import 'package:web3_freelancer/presentation/personal_info_screen/personal_info_screen.dart';
-import 'package:web3_freelancer/presentation/experience_setting_screen/experience_setting_screen.dart';
-import 'package:web3_freelancer/presentation/new_position_screen/new_position_screen.dart';
-import 'package:web3_freelancer/presentation/add_new_education_screen/add_new_education_screen.dart';
-import 'package:web3_freelancer/presentation/privacy_screen/privacy_screen.dart';
-import 'package:web3_freelancer/presentation/language_screen/language_screen.dart';
-import 'package:web3_freelancer/presentation/notifications_screen/notifications_screen.dart';
-import 'package:web3_freelancer/presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
@@ -55,7 +31,7 @@ class AppRoutes {
 
   static const String searchScreen = '/search_screen';
 
-  static const String jobDetailsPage = '/job_details_page';
+  static const String projectDetailsPage = '/project_details_page';
 
   static const String jobDetailsTabContainerScreen =
       '/job_details_tab_container_screen';
@@ -103,31 +79,31 @@ class AppRoutes {
   static const String appNavigationScreen = '/app_navigation_screen';
 
   static Map<String, WidgetBuilder> routes = {
-    splashScreen: (context) => SplashScreen(),
-    onboardingThreeScreen: (context) => OnboardingThreeScreen(),
-    signUpCreateAcountScreen: (context) => SignUpCreateAcountScreen(),
-    signUpCompleteAccountScreen: (context) => SignUpCompleteAccountScreen(),
-    jobTypeScreen: (context) => JobTypeScreen(),
-    speciallizationScreen: (context) => SpeciallizationScreen(),
-    selectACountryScreen: (context) => SelectACountryScreen(),
-    loginScreen: (context) => LoginScreen(),
-    enterOtpTabContainerScreen: (context) => EnterOtpTabContainerScreen(),
-    homeContainerScreen: (context) => HomeContainerScreen(),
-    searchScreen: (context) => SearchScreen(),
-    jobDetailsTabContainerScreen: (context) => JobDetailsTabContainerScreen(),
-    messageActionScreen: (context) => MessageActionScreen(),
-    chatScreen: (context) => ChatScreen(),
-    applyJobScreen: (context) => ApplyJobScreen(),
-    notificationsMyProposalsTabContainerScreen: (context) =>
-        NotificationsMyProposalsTabContainerScreen(),
-    settingsScreen: (context) => SettingsScreen(),
-    personalInfoScreen: (context) => PersonalInfoScreen(),
-    experienceSettingScreen: (context) => ExperienceSettingScreen(),
-    newPositionScreen: (context) => NewPositionScreen(),
-    addNewEducationScreen: (context) => AddNewEducationScreen(),
-    privacyScreen: (context) => PrivacyScreen(),
-    languageScreen: (context) => LanguageScreen(),
-    notificationsScreen: (context) => NotificationsScreen(),
-    appNavigationScreen: (context) => AppNavigationScreen()
+    // splashScreen: (context) => SplashScreen(),
+    // onboardingThreeScreen: (context) => OnboardingThreeScreen(),
+    // signUpCreateAcountScreen: (context) => SignUpCreateAcountScreen(),
+    // signUpCompleteAccountScreen: (context) => SignUpCompleteAccountScreen(),
+    // jobTypeScreen: (context) => JobTypeScreen(),
+    // speciallizationScreen: (context) => SpeciallizationScreen(),
+    // selectACountryScreen: (context) => SelectACountryScreen(),
+    // loginScreen: (context) => LoginScreen(),
+    // enterOtpTabContainerScreen: (context) => EnterOtpTabContainerScreen(),
+    // homeContainerScreen: (context) => HomeContainerScreen(),
+    // searchScreen: (context) => SearchScreen(),
+    // projectDetailsScreen: (context) => ProjectDetailsScreen(),
+    // messageActionScreen: (context) => MessageActionScreen(),
+    // chatScreen: (context) => ChatScreen(),
+    // applyJobScreen: (context) => ApplyJobScreen(),
+    // notificationsMyProposalsTabContainerScreen: (context) =>
+    //     NotificationsMyProposalsTabContainerScreen(),
+    // settingsScreen: (context) => SettingsScreen(),
+    // personalInfoScreen: (context) => PersonalInfoScreen(),
+    // experienceSettingScreen: (context) => ExperienceSettingScreen(),
+    // newPositionScreen: (context) => NewPositionScreen(),
+    // addNewEducationScreen: (context) => AddNewEducationScreen(),
+    // privacyScreen: (context) => PrivacyScreen(),
+    // languageScreen: (context) => LanguageScreen(),
+    // notificationsScreen: (context) => NotificationsScreen(),
+    // appNavigationScreen: (context) => AppNavigationScreen()
   };
 }

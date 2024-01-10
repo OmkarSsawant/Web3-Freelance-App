@@ -1,3 +1,5 @@
+import 'package:web3_freelancer/data/model/project.dart';
+
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
@@ -5,7 +7,9 @@ import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class ProjectTileWidget extends StatelessWidget {
-  const ProjectTileWidget({Key? key})
+  final Project project;
+
+  ProjectTileWidget({Key? key, required this.project})
       : super(
           key: key,
         );
@@ -53,12 +57,12 @@ class ProjectTileWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Digital Marketing",
+                                project.title,
                                 style: CustomTextStyles.titleMediumBold_1,
                               ),
                               SizedBox(height: 5),
                               Text(
-                                "Motorola",
+                                project.owner,
                                 style: CustomTextStyles.labelLargeGray500,
                               ),
                             ],
@@ -74,15 +78,19 @@ class ProjectTileWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      "560 - 12.000/Month",
+                      "${project.deposit}\t eth",
                       style: theme.textTheme.labelLarge,
                     ),
                     SizedBox(height: 13),
-                    Wrap(
-                      runSpacing: 8,
-                      spacing: 8,
-                      children: List<Widget>.generate(
-                          2, (index) => Fulltime3ItemWidget()),
+                    // Wrap(
+                    //   runSpacing: 8,
+                    //   spacing: 8,
+                    //   children: List<Widget>.generate(
+                    //       2, (index) => Fulltime3ItemWidget()),
+                    // ),
+                    Text(
+                      project.projectType,
+                      style: theme.textTheme.labelLarge,
                     ),
                     SizedBox(height: 13),
                     Container(
