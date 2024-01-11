@@ -50,19 +50,8 @@ class JobDetailsPageState extends State<JobDetailsPage>
             decoration: AppDecoration.linear,
             child: Column(children: [
               SizedBox(height: 12),
-              ElevatedButton(
-                  child: const Text("Place Bid"),
-                  onPressed: () {
-                    onTapApplyNow(context);
-                  })
             ]))
       ])
     ]));
-  }
-
-  /// Navigates to the applyJobScreen when the action is triggered.
-  onTapApplyNow(BuildContext context) {
-    //Add big to mongo
-    //TODO: deduct dev's apply_tokens
   }
 }

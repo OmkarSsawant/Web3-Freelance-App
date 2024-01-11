@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/presentation/job_details_page/job_details_page.dart';
@@ -32,8 +33,7 @@ Future createDumpProjects(FreelanceContractClient contract) async {
 
 // ignore_for_file: must_be_immutable
 class HomePage extends StatefulWidget {
-  final FreelanceContractClient contractClient;
-  HomePage({required this.contractClient, Key? key})
+  HomePage({Key? key})
       : super(
           key: key,
         );
@@ -169,6 +169,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Section Widget
   Widget _buildEightyEight(BuildContext context) {
+    final contract = context.read<FreelanceContractClient>();
     return Align(
       alignment: Alignment.center,
       child: Padding(
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (ctx) => ProjectDetailsScreen(
                       project: projects[index],
-                      contract: widget.contractClient,
+                      contract: contract,
                     ),
                   ));
                 },
@@ -199,7 +200,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void load() async {
-    final contract = widget.contractClient;
+    final contract = context.read<FreelanceContractClient>();
 
     // await Future.delayed(Duration(seconds: 5)); //time to intialize contract
     // await createDumpProjects(contract);

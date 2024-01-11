@@ -21,7 +21,8 @@ class JobdetailstabcontainerItemWidget extends StatelessWidget {
             height: 48,
             width: 48,
             padding: EdgeInsets.all(12),
-            decoration: IconButtonStyleHelper.fillGreen,
+            decoration: IconButtonStyleHelper.fillGrayTL16
+                .copyWith(color: Colors.grey[300]),
             child: CustomImageView(
               imagePath: image,
             ),

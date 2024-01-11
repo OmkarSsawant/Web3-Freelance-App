@@ -3,7 +3,9 @@ import 'dart:typed_data';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/home_page/home_page.dart';
 import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/ui/dashboard.dart';
@@ -40,24 +42,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: FutureBuilder(
-          future: contract.initContractAndFunctions(),
-          builder: (c, s) {
-            if (!s.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+    return MultiProvider(
+        providers: [
+          Provider(create: (ctx) => contract),
+          Provider(create: (ctx) => FirestoreSaver())
+        ],
+        builder: (context, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                useMaterial3: true,
+              ),
+              home: FutureBuilder(
+                  future: contract.initContractAndFunctions(),
+                  builder: (c, s) {
+                    if (!s.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-            return HomePage(contractClient: contract);
-          }),
-    );
+                    return HomePage();
+                  }),
+            ));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,9 @@ class ProjectTileWidget extends StatelessWidget {
                         alignment: AlignmentDirectional.topEnd,
                         child: FilledButton.icon(
                             label: const Text("Bid"),
-                            onPressed: () {},
+                            onPressed: () async {
+                              showPlaceBid(context, project);
+                            },
                             icon: const Icon(Icons.money_outlined)),
                       ),
                     ),

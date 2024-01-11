@@ -1,32 +1,32 @@
 class Bid {
   final String owner;
   final BigInt projectId;
-  final BigInt amount;
-  final String propsal;
+  final String amount;
+  final String proposal;
   final List<String> attachments;
 
   Bid(
       {required this.owner,
       required this.projectId,
       required this.amount,
-      required this.propsal,
+      required this.proposal,
       required this.attachments});
 
-  factory Bid.fromValues(String owner, BigInt projectId, BigInt amount,
+  factory Bid.fromValues(String owner, String projectId, String amount,
       String propsal, List<String> attachments) {
     return Bid(
         owner: owner,
-        projectId: projectId,
+        projectId: BigInt.parse(projectId),
         amount: amount,
-        propsal: propsal,
+        proposal: propsal,
         attachments: attachments);
   }
 
   Map<String, dynamic> toJson() => {
         "owner": owner,
-        "projectId": projectId,
+        "projectId": projectId.toString(),
         "amount": amount,
-        "propsal": propsal,
+        "propsal": proposal,
         "attachments": attachments
       };
 }

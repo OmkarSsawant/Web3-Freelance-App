@@ -1,5 +1,10 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/job_details_page/job_details_page.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
@@ -36,6 +41,20 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
       eligiblityCriteria: "Loading ...",
       roles: ["Loading ..."],
       ssrDocIpfs: "Loading ...");
+  Future<bool> hasBidded(BuildContext context) async {
+    final sp = await SharedPreferences.getInstance();
+
+    final pk = "web3freelancer.onetime.${widget.project.id}.bidded";
+    if (!sp.containsKey(pk)) {
+      //have not checked bid status even one's
+      var read = context.read<FirestoreSaver>();
+      bool isBidded = await read.isBiddedBy(widget.project, "0xcurrentuerdev");
+      await sp.setBool(pk, isBidded);
+      return isBidded;
+    }
+    return sp.getBool(pk) ?? false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +64,8 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = context.read<FreelanceContractClient>();
+    debugPrint(c.toString());
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBar(context),
@@ -87,6 +108,21 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
             ),
           ),
         ),
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FutureBuilder(
+            future: hasBidded(context),
+            builder: (context, snap) {
+              final disabled =
+                  (!snap.hasData || (snap.data != null && snap.data!));
+
+              return FloatingActionButton.extended(
+                  icon: const Icon(Icons.how_to_vote_sharp),
+                  onPressed: disabled
+                      ? null
+                      : () => showPlaceBid(context, widget.project),
+                  label: const Text("Place Bid"));
+            }),
       ),
     );
   }
@@ -95,14 +131,9 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 48,
-      leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgComponent1,
-        margin: EdgeInsets.only(
-          left: 24,
-          top: 13,
-          bottom: 13,
-        ),
-      ),
+      leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back)),
       centerTitle: true,
       title: AppbarTitle(
         text: " Details",
@@ -195,20 +226,24 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
         JobdetailstabcontainerItemWidget(
           s: "Budget",
           v: "${EtherAmount.inWei(widget.project.deposit).getValueInUnit(EtherUnit.ether)}\t eth",
-          image: ImageConstant.imgBag,
+          image: "assets/images/eth.svg",
         ),
         JobdetailstabcontainerItemWidget(
-            s: "Dealine",
+            s: "Deadline",
             v: DateTime.fromMillisecondsSinceEpoch(
                     widget.project.deadline.toInt())
                 .format("dd-MM-yy")
                 .toString(),
             image: ImageConstant.imgCalendar),
-        JobdetailstabcontainerItemWidget(
-          s: "Applied",
-          v: 5.toString(),
-          image: ImageConstant.imgPlus,
-        )
+        FutureBuilder(
+            future: context.read<FirestoreSaver>().biddersCount(widget.project),
+            builder: (context, snap) {
+              return JobdetailstabcontainerItemWidget(
+                s: "Applied",
+                v: !snap.hasData ? "0" : snap.data!.toString(),
+                image: ImageConstant.imgPlus,
+              );
+            })
       ],
     );
   }
@@ -267,4 +302,119 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
       pd = ProjectDetails.fromBlockchain(rd[0]);
     });
   }
+}
+
+void showPlaceBid(BuildContext context, Project project) {
+  final store = context.read<FirestoreSaver>();
+  final _editTextCtlr = TextEditingController();
+  final _editTextPropsal = TextEditingController();
+  bool fileReqUploaded = true;
+  final attachments = <String>[];
+  showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: context.screenHeight * .57,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(7)),
+                      hintText: "0.01",
+                      labelText: "Amount",
+                      helperText: "Amount should be in eth",
+                      prefixIcon: const Icon(Icons.currency_bitcoin_rounded)),
+                  autocorrect: false,
+                  controller: _editTextCtlr,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7)),
+                    hintText: "Write why you are a good fit for this project",
+                    labelText: "Proposal",
+                  ),
+                  autocorrect: false,
+                  controller: _editTextPropsal,
+                  minLines: 4,
+                  maxLines: 10,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              FilledButton.icon(
+                  onPressed: () async {
+                    FilePickerResult? result = await FilePicker.platform
+                        .pickFiles(
+                            allowMultiple: false,
+                            type: FileType.custom,
+                            allowedExtensions: ['.pdf', '.doc', 'docx']);
+                    if (result != null && result.files.first.bytes != null) {
+                      fileReqUploaded = false;
+                      store
+                          .uploadProposal(result.files.first.bytes!, project.id,
+                              "0xmyaddressofdev999")
+                          .whenComplete(() => fileReqUploaded = true);
+                    }
+                  },
+                  icon: const Icon(Icons.file_upload),
+                  label: const Text(" Upload Proposal  ")),
+              ElevatedButton(
+                  onPressed: () async {
+                    if (fileReqUploaded) {
+                      final p = project;
+                      final amt = _editTextCtlr.value.text.trim();
+
+                      final bid = Bid(
+                          owner: p.owner,
+                          projectId: p.id,
+                          amount: amt,
+                          proposal: _editTextPropsal.text,
+                          attachments: attachments);
+                      try {
+                        debugPrint("Placing Bid");
+                        await store.placeBid(bid);
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                child: Center(
+                                  child: Text("Successfully Placed Bid"),
+                                ),
+                              );
+                            });
+                      } catch (e) {
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                child: Center(
+                                  child: Text(e.toString()),
+                                ),
+                              );
+                            });
+                      }
+                    } else {}
+                  },
+                  child: const Text("Confirm Bid"))
+            ],
+          ),
+        );
+      });
 }
