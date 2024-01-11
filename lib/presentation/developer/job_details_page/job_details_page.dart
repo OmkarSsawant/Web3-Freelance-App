@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
-import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/widgets/custom_elevated_button.dart';
 
 class JobDetailsPage extends StatefulWidget {

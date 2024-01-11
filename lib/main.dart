@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
-import 'package:web3_freelancer/presentation/developer_registration/registration_screen.dart';
-import 'package:web3_freelancer/presentation/home_page/home_page.dart';
-import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
-import 'package:web3_freelancer/ui/dashboard.dart';
+import 'package:web3_freelancer/presentation/developer/developer_registration/registration_screen.dart';
+import 'package:web3_freelancer/presentation/project_owner/dashboard.dart';
+import 'package:web3_freelancer/presentation/project_owner/owner_profile.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
@@ -64,7 +63,7 @@ class _MyAppState extends State<MyApp> {
                       );
                     }
 
-                    return DevRegistrationScreen();
+                    return OwnerDashboard();
                   }),
             ));
   }

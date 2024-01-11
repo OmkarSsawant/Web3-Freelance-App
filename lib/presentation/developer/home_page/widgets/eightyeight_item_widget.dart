@@ -1,5 +1,5 @@
 import 'package:web3_freelancer/data/model/project.dart';
-import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
+import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';

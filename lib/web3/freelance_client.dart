@@ -111,7 +111,7 @@ class FreelanceContractClient {
   registerProjectOwner(
       String name,
       String email,
-      int phone,
+      BigInt phone,
       String licenseDocIpfs,
       String company,
       String url,
@@ -124,7 +124,7 @@ class FreelanceContractClient {
         parameters: [
           name.bytes32,
           email.bytes32,
-          BigInt.from(phone),
+          phone,
           licenseDocIpfs.bytes32,
           false,
           company.bytes32,

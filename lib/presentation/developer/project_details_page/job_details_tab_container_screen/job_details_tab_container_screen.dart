@@ -5,7 +5,7 @@ import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
-import 'package:web3_freelancer/presentation/job_details_page/job_details_page.dart';
+import 'package:web3_freelancer/presentation/developer/job_details_page/job_details_page.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';

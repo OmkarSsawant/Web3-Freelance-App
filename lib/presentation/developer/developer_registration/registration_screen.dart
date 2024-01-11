@@ -2,8 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
-import 'package:web3_freelancer/presentation/home_page/home_page.dart';
-import 'package:web3_freelancer/routes/app_routes.dart';
+import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 

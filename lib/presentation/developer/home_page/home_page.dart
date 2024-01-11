@@ -1,8 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
-import 'package:web3_freelancer/presentation/job_details_page/job_details_page.dart';
-import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
+import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 
