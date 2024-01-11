@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "422196741485",
+    "project_id": "web3freelancer-dev",
+    "storage_bucket": "web3freelancer-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422196741485:android:dcf8f1bc4242cd2ecb0664",
+        "android_client_info": {
+          "package_name": "com.visionDev.web3_freelancer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8XoH8DSx-mBwXUlO1CInd_w5WfGab1cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
