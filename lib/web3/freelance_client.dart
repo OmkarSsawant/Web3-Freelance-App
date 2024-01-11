@@ -40,7 +40,8 @@ class FreelanceContractClient {
       _getDevBidTokens,
       _devPlaceBids,
       _getProjects,
-      _getProjectDetails;
+      _getProjectDetails,
+      _addProjectDetails;
 
   //,Credentials get _creds =>
   FreelanceContractClient() {
@@ -76,6 +77,8 @@ class FreelanceContractClient {
     _devPlaceBids = _contract.function("devPlaceBids");
     _getProjects = _contract.function("getProjects");
     _getProjectDetails = _contract.function("getProjectDetails");
+    _addProjectDetails = _contract.function("addProjectDetails");
+    return true;
   }
 
   Future<String> getName() async {
@@ -166,7 +169,7 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
         uint _deposit_budget
     ) 
    */
-  createProject(EthereumAddress owner, String title, String ssrdocIpfs,
+  createProject(EthereumAddress owner, String title, String shortDesc,
       String projectType, BigInt deadline, BigInt depositBudget) async {
     return await _ethClient.sendTransaction(
         creds,
@@ -176,10 +179,10 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
             parameters: [
               owner,
               title.bytes32,
-              ssrdocIpfs.bytes32,
               projectType.bytes32,
               deadline,
-              depositBudget
+              depositBudget,
+              shortDesc
             ],
             value: EtherAmount.inWei(BigInt.from(10000000000000000))),
         chainId: 31337);
@@ -228,9 +231,42 @@ function addReview(uint _project_id,string memory _r)
         .call(contract: _contract, function: _getProjects, params: []);
   }
 
-  Future getProjectDetails() async {
-    return await _ethClient
-        .call(contract: _contract, function: _getProjectDetails, params: []);
+  Future getProjectDetails(BigInt projectId) async {
+    return await _ethClient.call(
+        contract: _contract, function: _getProjectDetails, params: [projectId]);
+  }
+
+/*
+
+    function addProjectDetails(
+        uint project_id,
+           string memory _description,
+        bytes32[] memory  _techstack,
+        bytes32 _ssrdoc_ipfs,
+        string memory _eligiblity_criteria,
+        string[] memory _roles
+    )public returns (bool) */
+  Future addProjectDetails(
+      BigInt projectId,
+      String description,
+      List<String> techStack,
+      String ssrdocIPFS,
+      String eligibilityCriteria,
+      List<String> roles) async {
+    return await _ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+            contract: _contract,
+            function: _addProjectDetails,
+            parameters: [
+              projectId,
+              description,
+              techStack.map((e) => e.bytes32).toList(),
+              ssrdocIPFS.bytes32,
+              eligibilityCriteria,
+              roles
+            ]),
+        chainId: 31337);
   }
 
   /*

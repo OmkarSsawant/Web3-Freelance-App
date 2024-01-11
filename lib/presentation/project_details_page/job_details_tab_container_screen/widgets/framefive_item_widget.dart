@@ -3,7 +3,8 @@ import 'package:web3_freelancer/core/app_export.dart';
 
 // ignore: must_be_immutable
 class FramefiveItemWidget extends StatelessWidget {
-  const FramefiveItemWidget({Key? key})
+  final String s;
+  const FramefiveItemWidget(this.s, {Key? key})
       : super(
           key: key,
         );
@@ -18,7 +19,7 @@ class FramefiveItemWidget extends StatelessWidget {
       showCheckmark: false,
       labelPadding: EdgeInsets.zero,
       label: Text(
-        "Fulltime",
+        s,
         style: TextStyle(
           color: appTheme.blueGray400,
           fontSize: 12,

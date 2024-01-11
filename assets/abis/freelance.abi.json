@@ -90,6 +90,50 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "project_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_techstack",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_ssrdoc_ipfs",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "_eligiblity_criteria",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_roles",
+        "type": "string[]"
+      }
+    ],
+    "name": "addProjectDetails",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_project_id",
         "type": "uint256"
       },
@@ -153,11 +197,6 @@
       },
       {
         "internalType": "bytes32",
-        "name": "_ssrdoc_ipfs",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
         "name": "_project_type",
         "type": "bytes32"
       },
@@ -170,6 +209,11 @@
         "internalType": "uint256",
         "name": "_deposit_budget",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_short_desc",
+        "type": "string"
       }
     ],
     "name": "createProject",
@@ -305,6 +349,52 @@
         "type": "uint256"
       }
     ],
+    "name": "getProjectDetails",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "techstack",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "eligiblity_criteria",
+            "type": "string"
+          },
+          {
+            "internalType": "string[]",
+            "name": "roles",
+            "type": "string[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "ssr_doc_ipfs",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct Freelance.ProjectDetails",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "project_id",
+        "type": "uint256"
+      }
+    ],
     "name": "getProjectStatus",
     "outputs": [
       {
@@ -366,11 +456,6 @@
           },
           {
             "internalType": "bytes32",
-            "name": "ssrdoc_ipfs",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
             "name": "project_type",
             "type": "bytes32"
           },
@@ -383,6 +468,11 @@
             "internalType": "uint256",
             "name": "deposit_budget",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "short_description",
+            "type": "string"
           },
           {
             "internalType": "enum Freelance.WorkStatus",
@@ -454,11 +544,6 @@
           },
           {
             "internalType": "bytes32",
-            "name": "ssrdoc_ipfs",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
             "name": "project_type",
             "type": "bytes32"
           },
@@ -471,6 +556,11 @@
             "internalType": "uint256",
             "name": "deposit_budget",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "short_description",
+            "type": "string"
           },
           {
             "internalType": "enum Freelance.WorkStatus",
@@ -542,11 +632,6 @@
           },
           {
             "internalType": "bytes32",
-            "name": "ssrdoc_ipfs",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
             "name": "project_type",
             "type": "bytes32"
           },
@@ -559,6 +644,11 @@
             "internalType": "uint256",
             "name": "deposit_budget",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "short_description",
+            "type": "string"
           },
           {
             "internalType": "enum Freelance.WorkStatus",

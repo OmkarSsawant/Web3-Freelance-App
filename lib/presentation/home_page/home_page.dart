@@ -1,5 +1,6 @@
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/presentation/job_details_page/job_details_page.dart';
 import 'package:web3_freelancer/presentation/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
@@ -16,27 +17,17 @@ import 'package:web3_freelancer/widgets/app_bar/custom_app_bar.dart';
 import 'package:web3_freelancer/widgets/custom_search_view.dart';
 
 Future createDumpProjects(FreelanceContractClient contract) async {
-  await contract.createProject(
-      projectOwnerCred.address,
-      "Project Web3",
-      "ipfs://ssrdocIpfs",
-      "flutter",
-      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
-      BigInt.from(100000000000000000));
-  await contract.createProject(
-      projectOwnerCred.address,
-      "2Project Web3",
-      "ipfs://ssrdocIpfs",
-      "web",
-      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
-      BigInt.from(100000000000000000));
-  return await contract.createProject(
-      projectOwnerCred.address,
-      "3Project Web3",
-      "ipfs://ssrdocIpfs",
-      "android",
-      DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
-      BigInt.from(100000000000000000));
+  for (var i = 0; i < 7; i++) {
+    await contract.createProject(
+        projectOwnerCred.address,
+        "Project Web$i",
+        "A best Project",
+        "flutter$i",
+        DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
+        BigInt.from(100000000000000000));
+    await contract.addProjectDetails(i.big, "description$i", ["techStack"],
+        "ssrdocIPFS$i", "eligibilityCriteria$i", ["roles"]);
+  }
 }
 
 // ignore_for_file: must_be_immutable
@@ -190,13 +181,11 @@ class _HomePageState extends State<HomePage> {
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => ProjectDetailsScreen(
-                          projectDetails: ProjectDetails(
-                              description: "description",
-                              techstack: ["techstack"],
-                              eligiblityCriteria: "eligiblityCriteria",
-                              roles: ["roles"],
-                              ssrDocIpfs: "ssrDocIpfs"))));
+                    builder: (ctx) => ProjectDetailsScreen(
+                      project: projects[index],
+                      contract: widget.contractClient,
+                    ),
+                  ));
                 },
                 child: ProjectTileWidget(
                   project: projects[index],
@@ -212,14 +201,19 @@ class _HomePageState extends State<HomePage> {
   void load() async {
     final contract = widget.contractClient;
 
-    await Future.delayed(Duration(seconds: 5)); //time to intialize contract
-    await createDumpProjects(contract);
-    debugPrint("Added Projects.");
+    // await Future.delayed(Duration(seconds: 5)); //time to intialize contract
+    // await createDumpProjects(contract);
+    // debugPrint("Added Projects.");
     // await Future.delayed(Duration(seconds: 5)); //time to intialize contract
     contract.getProjects().then((value) {
       debugPrint(value[0][0].toString());
       projects = value[0].map<Project>(Project.fromBlockchain).toList();
       setState(() {});
+      var pds = projects
+          .map((p) async => ProjectDetails.fromBlockchain(
+              (await contract.getProjectDetails(p.id))[0]))
+          .toList();
+      debugPrint(pds.toString());
     });
   }
 }

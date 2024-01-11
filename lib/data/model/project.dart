@@ -7,8 +7,8 @@ class Project {
   final String owner;
   final String title;
   final String projectType;
-  final int deadline;
-  final double deposit;
+  final BigInt deadline;
+  final BigInt deposit;
   final String shortDescription;
   factory Project.fromBlockchain(dynamic m) {
     return Project(
@@ -32,9 +32,9 @@ class Project {
 
   static Project get sample => Project(
       id: 99.big,
-      deadline: DateTime.now().millisecond,
+      deadline: DateTime.now().millisecond.big,
       owner: "0xsdfdfdvdvffvfvb555dd",
-      deposit: 0.001,
+      deposit: 1.big,
       projectType: "web",
       title: "Web3 Freelance App",
       shortDescription: "A Decentralized Freelance Platform");

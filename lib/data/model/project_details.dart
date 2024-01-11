@@ -16,7 +16,7 @@ class ProjectDetails {
             .toList(),
         eligiblityCriteria: m[2],
         roles: (m[3] as List).map<String>((e) => e).toList(),
-        ssrDocIpfs: m[4]);
+        ssrDocIpfs: Uint8List.fromList(m[4]).string);
   }
 
   ProjectDetails(

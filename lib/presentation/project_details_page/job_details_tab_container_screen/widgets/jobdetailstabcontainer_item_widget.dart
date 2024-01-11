@@ -4,7 +4,9 @@ import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 
 // ignore: must_be_immutable
 class JobdetailstabcontainerItemWidget extends StatelessWidget {
-  const JobdetailstabcontainerItemWidget({Key? key})
+  final String s, v, image;
+  JobdetailstabcontainerItemWidget(
+      {Key? key, required this.s, required this.v, required this.image})
       : super(
           key: key,
         );
@@ -21,17 +23,17 @@ class JobdetailstabcontainerItemWidget extends StatelessWidget {
             padding: EdgeInsets.all(12),
             decoration: IconButtonStyleHelper.fillGreen,
             child: CustomImageView(
-              imagePath: ImageConstant.imgWallet,
+              imagePath: image,
             ),
           ),
           SizedBox(height: 9),
           Text(
-            "Salary",
+            s,
             style: CustomTextStyles.labelLargeGray500_1,
           ),
           SizedBox(height: 9),
           Text(
-            "6k - 11k",
+            v,
             style: CustomTextStyles.titleSmallSemiBold,
           ),
         ],
