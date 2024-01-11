@@ -184,7 +184,7 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
               depositBudget,
               shortDesc
             ],
-            value: EtherAmount.inWei(BigInt.from(10000000000000000))),
+            value: EtherAmount.inWei(depositBudget)),
         chainId: 31337);
   }
 
