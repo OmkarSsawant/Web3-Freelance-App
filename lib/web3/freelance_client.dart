@@ -41,7 +41,8 @@ class FreelanceContractClient {
       _devPlaceBids,
       _getProjects,
       _getProjectDetails,
-      _addProjectDetails;
+      _addProjectDetails,
+      _getOngoingTaskAndPaymentTillNow;
 
   //,Credentials get _creds =>
   FreelanceContractClient() {
@@ -78,6 +79,8 @@ class FreelanceContractClient {
     _getProjects = _contract.function("getProjects");
     _getProjectDetails = _contract.function("getProjectDetails");
     _addProjectDetails = _contract.function("addProjectDetails");
+    _getOngoingTaskAndPaymentTillNow =
+        _contract.function("getOngoingTaskAndPaymentTillNow");
     return true;
   }
 
@@ -144,7 +147,7 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
   finalizeProjectBid(BigInt amount, BigInt projectId, String proposal,
       List<String> attachments, EthereumAddress developer) async {
     return await _ethClient.sendTransaction(
-        creds,
+        projectOwnerCred,
         Transaction.callContract(
             contract: _contract,
             function: _finalizeProjectBid,
@@ -368,5 +371,13 @@ function addReview(uint _project_id,string memory _r)
             function: _devPlaceBids,
             parameters: [dev, count]),
         chainId: 31337);
+  }
+
+  Future<List<dynamic>> getOngoingTaskAndPaymentTillNow(
+      BigInt projectId) async {
+    return await _ethClient.call(
+        contract: _contract,
+        function: _getOngoingTaskAndPaymentTillNow,
+        params: [projectId]);
   }
 }

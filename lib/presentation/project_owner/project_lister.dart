@@ -57,9 +57,13 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
         ProjectsViewer(
             projects: _pendingProjects,
             onTap: (project) {
+              final store = context.read<FirestoreSaver>();
+
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => BidChoosingScreen(
-                        p: project,
+                        bidsFuture: store.getPendingBids(project),
+                        onTap: _chooseBid,
+                        btnText: "Confirm Bid",
                       )));
             },
             btnText: "Request Pending"),
@@ -75,6 +79,14 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
         label: const Text("Create Project"),
       ),
     );
+  }
+
+  _chooseBid(BuildContext context, FirestoreSaver store, Bid b) async {
+    await store.approveBid(b, projectOwnerCred.address.hex);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
+    // await Future.delayed(Durations.extralong4);
+    // Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void loadProjects() async {

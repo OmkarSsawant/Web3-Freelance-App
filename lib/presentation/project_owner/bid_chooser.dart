@@ -9,8 +9,11 @@ import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 
 class BidChoosingScreen extends StatefulWidget {
-  final Project p;
-  const BidChoosingScreen({super.key, required this.p});
+  final String btnText;
+  final Future<List<Bid>> bidsFuture;
+  final Function(BuildContext, FirestoreSaver, Bid)? onTap;
+  const BidChoosingScreen(
+      {super.key, required this.btnText, this.onTap, required this.bidsFuture});
 
   @override
   State<BidChoosingScreen> createState() => _BidChoosingScreenState();
@@ -21,8 +24,11 @@ class _BidChoosingScreenState extends State<BidChoosingScreen> {
   Widget build(BuildContext context) {
     final store = context.read<FirestoreSaver>();
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Bids"),
+      ),
       body: FutureBuilder<List<Bid>>(
-          future: store.getPendingBids(widget.p),
+          future: widget.bidsFuture,
           builder: (context, snap) {
             if (!snap.hasData || snap.hasError || snap.data == null) {
               return const Center(
@@ -37,7 +43,7 @@ class _BidChoosingScreenState extends State<BidChoosingScreen> {
                       subtitle: Text("${bids[index].amount}\teth"),
                       trailing: FilledButton.icon(
                           onPressed: () =>
-                              _chooseBid(context, store, bids[index]),
+                              widget.onTap?.call(context, store, bids[index]),
                           icon: const Icon(Icons.confirmation_num),
                           label: const Text("Confirm Bid")),
                       children: [
@@ -55,14 +61,6 @@ class _BidChoosingScreenState extends State<BidChoosingScreen> {
                     ));
           }),
     );
-  }
-
-  _chooseBid(BuildContext context, FirestoreSaver store, Bid b) async {
-    await store.approveBid(b, projectOwnerCred.address.hex);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
-    // await Future.delayed(Durations.extralong4);
-    // Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _openAttachmentFile(BuildContext context, String? docUrl) async {

@@ -89,6 +89,16 @@ class FirestoreSaver {
         .toList();
   }
 
+  Future<List<Bid>> getApprovedBidsOfDev(String dev) async {
+    return (await store
+            .collectionGroup("bids")
+            .where("bidder", isEqualTo: dev)
+            .get())
+        .docs
+        .map<Bid>((d) => Bid.fromFS(d.data(), d.id))
+        .toList();
+  }
+
   Future approveBid(Bid b, String owner) async {
     final WriteBatch batch = store.batch();
     final docsToDelete = await store

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/utils.dart';
 
 class Project {
@@ -10,11 +11,14 @@ class Project {
   final BigInt deadline;
   final BigInt deposit;
   final String shortDescription;
+  final Bid? finalizedBid;
+
   factory Project.fromBlockchain(dynamic m) {
     return Project(
         id: m[0],
         owner: m[1].toString(),
         title: Uint8List.fromList(m[2]).string,
+        finalizedBid: Bid.fromBlockchain(m[3], m[1].toString(), m[0]),
         projectType: Uint8List.fromList(m[4]).string,
         deadline: m[5],
         deposit: m[6],
@@ -23,6 +27,7 @@ class Project {
 
   Project(
       {required this.id,
+      this.finalizedBid,
       required this.owner,
       required this.title,
       required this.projectType,

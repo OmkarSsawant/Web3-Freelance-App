@@ -1,9 +1,15 @@
+import 'dart:math';
+
 import 'package:provider/provider.dart';
+import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
+import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
+import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
@@ -43,7 +49,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
-  List<Project> projects = [];
+  List<Project> projects = [], onGoing = [];
 
   @override
   void initState() {
@@ -77,15 +83,15 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 25),
-              //TODO:Integrate recommendation server           // Padding(
-              //   padding: EdgeInsets.only(left: 24),
-              //   child: Text(
-              //     "Recommendation",
-              //     style: CustomTextStyles.titleMedium18,
-              //   ),
-              // ),
-              // SizedBox(height: 17),
-              // _buildFrame(context),
+              Padding(
+                padding: EdgeInsets.only(left: 24),
+                child: Text(
+                  "Ongoing Projects",
+                  style: CustomTextStyles.titleMedium18,
+                ),
+              ),
+              SizedBox(height: 17),
+              _buildFrame(context),
               SizedBox(height: 22),
               Padding(
                 padding: EdgeInsets.only(left: 24),
@@ -128,6 +134,29 @@ class _HomePageState extends State<HomePage> {
       ),
       actions: [
         AppbarTrailingImage(
+          onTap: () {
+            final store = context.read<FirestoreSaver>();
+            final contract = context.read<FreelanceContractClient>();
+
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => BidChoosingScreen(
+                    onTap: (context, store, Bid bid) async {
+                      var dev = EthereumAddress.fromHex(bid.bidder!);
+                      debugPrint("dev: $dev");
+                      var txn = await contract.finalizeProjectBid(
+                          BigInt.from(double.parse(bid.amount) * pow(10, 18)),
+                          bid.projectId,
+                          bid.proposal,
+                          bid.attachments,
+                          dev);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "Project Contract Finalized $txn .Kindly check the chat screen")));
+                      debugPrint(txn);
+                    },
+                    bidsFuture: store.getApprovedBidsOfDev(creds.address.hex),
+                    btnText: "Agree & Confirm")));
+          },
           imagePath: ImageConstant.imgNotification,
           margin: EdgeInsets.symmetric(
             horizontal: 24,
@@ -140,6 +169,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Section Widget
   Widget _buildFrame(BuildContext context) {
+    debugPrint(onGoing.toString());
     return Align(
       alignment: Alignment.centerRight,
       child: SizedBox(
@@ -155,10 +185,10 @@ class _HomePageState extends State<HomePage> {
               width: 16,
             );
           },
-          itemCount: 2,
+          itemCount: onGoing.length,
           itemBuilder: (context, index) {
             return ProjectRecommendationTileWidget(
-              project: Project.sample,
+              project: onGoing[index],
             );
           },
         ),
@@ -189,10 +219,14 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: ProjectTileWidget(
                   project: projects[index],
-                  onTap: () async {
-                    showPlaceBid(context, projects[index]);
-                  },
-                  btnText: "Bid",
+                  onTap: projects[index].finalizedBid?.amount == "0"
+                      ? () async {
+                          showPlaceBid(context, projects[index]);
+                        }
+                      : null,
+                  btnText: projects[index].finalizedBid?.amount == "0"
+                      ? "Bid"
+                      : "Assigned",
                 ),
               ),
             );
@@ -214,7 +248,16 @@ class _HomePageState extends State<HomePage> {
         if (value[0].isEmpty) return;
         debugPrint(value[0][0].toString());
         projects = value[0].map<Project>(Project.fromBlockchain).toList();
+        onGoing = projects
+            .where((it) =>
+                it.finalizedBid != null &&
+                it.finalizedBid?.bidder == creds.address.hex)
+            .toList();
         setState(() {});
+
+        for (var e in projects) {
+          debugPrint("test${e.finalizedBid?.toJson().toString()}");
+        }
         var pds = projects
             .map((p) async => ProjectDetails.fromBlockchain(
                 (await contract.getProjectDetails(p.id))[0]))

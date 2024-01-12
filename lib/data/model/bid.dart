@@ -1,3 +1,8 @@
+import 'dart:typed_data';
+
+import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/utils.dart';
+
 class Bid {
   final String owner;
   final BigInt projectId;
@@ -41,5 +46,18 @@ class Bid {
         bidder: bidder,
         attachments:
             data["attachments"].map<String>((e) => e as String).toList());
+  }
+
+  static Bid? fromBlockchain(m, String projectOwner, BigInt projectId) {
+    if (m[1] == null || m[1].toString().isEmpty) return null;
+    return Bid(
+        owner: projectOwner,
+        projectId: projectId,
+        amount: m[0].toString(),
+        proposal: m[2].toString(),
+        bidder: m[1].toString().isEmpty ? null : m[1].toString(),
+        attachments: m[3]
+            .map<String>((bytes32) => Uint8List.fromList(bytes32).string)
+            .toList());
   }
 }
