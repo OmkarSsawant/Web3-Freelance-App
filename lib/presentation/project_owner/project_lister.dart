@@ -34,5 +34,15 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen> {
     setState(() {
       _allProjects = List.from(ps).map(Project.fromBlockchain).toList();
     });
+    var ppIds =
+        await store.getPendingProjectIdsOfOwner(projectOwnerCred.address.hex);
+    var apIds =
+        await store.getApprovedProjectIdsOfOwner(projectOwnerCred.address.hex);
+    setState(() {
+      _pendingProjects =
+          _allProjects.where((p) => ppIds.contains(p.id)).toList();
+      _approvedProjects =
+          _allProjects.where((p) => apIds.contains(p.id)).toList();
+    });
   }
 }

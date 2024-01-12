@@ -64,6 +64,28 @@ class FirestoreSaver {
     }).toList();
   }
 
+  Future<List<BigInt>> getPendingProjectIdsOfOwner(String owner) async {
+    return (await store
+            .collection("owners")
+            .doc(owner)
+            .collection("projects")
+            .get())
+        .docs
+        .map<BigInt>((e) => BigInt.parse(e.id))
+        .toList();
+  }
+
+  Future<List<BigInt>> getApprovedProjectIdsOfOwner(String owner) async {
+    return (await store
+            .collection("owners")
+            .doc(owner)
+            .collection("projects-approved")
+            .get())
+        .docs
+        .map<BigInt>((e) => BigInt.parse(e.id))
+        .toList();
+  }
+
   approveBid(Bid b, String owner) async {
     await store
         .collection("owners")
