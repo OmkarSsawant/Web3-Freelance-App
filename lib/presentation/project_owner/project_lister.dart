@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/widgets/eightyeight_item_widget.dart';
@@ -19,6 +20,8 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
   List<Project> _notBiddedProjects = [];
   List<Project> _approvedProjects = [];
   List<Project> _pendingProjects = [];
+  List<Bid> _allPendingBid = [];
+  List<Bid> _allApprovedBid = [];
   late TabController _tabController;
   @override
   void initState() {
@@ -80,10 +83,12 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
     var ps = (await contract.getProjectsOfOwner(projectOwnerCred.address))[0];
     var allProjects = List.from(ps).map(Project.fromBlockchain).toList();
     debugPrint(allProjects.toString());
-    var ppIds =
-        await store.getPendingProjectIdsOfOwner(projectOwnerCred.address.hex);
-    var apIds =
-        await store.getApprovedProjectIdsOfOwner(projectOwnerCred.address.hex);
+    _allPendingBid =
+        await store.getAllPendingBidsOfOwner(projectOwnerCred.address.hex);
+    _allApprovedBid =
+        await store.getAllApprovedBidsOfOwner(projectOwnerCred.address.hex);
+    var apIds = _allApprovedBid.map((e) => e.projectId).toList();
+    var ppIds = _allPendingBid.map((e) => e.projectId).toList();
     debugPrint(apIds.toString());
     debugPrint(ppIds.toString());
     setState(() {

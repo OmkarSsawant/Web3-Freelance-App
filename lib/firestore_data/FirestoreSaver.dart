@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/utils.dart';
@@ -66,38 +67,50 @@ class FirestoreSaver {
     }).toList();
   }
 
-  Future<List<BigInt>> getPendingProjectIdsOfOwner(String owner) async {
-    var ref = (store.collection("owners").doc(owner).collection("projects"));
-    ref.path.printInDebug;
-    return (await ref.get())
-        .docs
-        .map<BigInt>((e) => BigInt.parse(e.id))
-        .toList();
-  }
-
-  Future<List<BigInt>> getApprovedProjectIdsOfOwner(String owner) async {
+  Future<List<Bid>> getAllPendingBidsOfOwner(String owner) async {
     return (await store
-            .collection("owners")
-            .doc(owner)
-            .collection("projects-approved")
+            .collectionGroup("bids")
+            .where("owner", isEqualTo: owner)
+            .where("bidder", isEqualTo: null)
             .get())
         .docs
-        .map<BigInt>((e) => BigInt.parse(e.id))
+        .map<Bid>((d) => Bid.fromFS(d.data(), d.id))
         .toList();
   }
 
-  approveBid(Bid b, String owner) async {
-    await store
+  Future<List<Bid>> getAllApprovedBidsOfOwner(String owner) async {
+    return (await store
+            .collectionGroup("bids")
+            .where("owner", isEqualTo: owner)
+            .where("bidder", isNotEqualTo: null)
+            .get())
+        .docs
+        .map<Bid>((d) => Bid.fromFS(d.data(), d.id))
+        .toList();
+  }
+
+  Future approveBid(Bid b, String owner) async {
+    final WriteBatch batch = store.batch();
+    final docsToDelete = await store
         .collection("owners")
         .doc(owner)
         .collection("projects")
         .doc(b.projectId.toString())
-        .delete();
-    await store
-        .collection("owners")
-        .doc(owner)
-        .collection("projects-approved")
-        .doc(b.projectId.toString())
-        .set(b.toJson());
+        .collection("bids")
+        .get();
+    docsToDelete.docs.forEach((doc) {
+      batch.delete(doc.reference);
+    });
+    batch.set(
+        store
+            .collection("owners")
+            .doc(owner)
+            .collection("projects-approved")
+            .doc(b.projectId.toString())
+            .collection("bids")
+            .doc(b.bidder),
+        b.toJson());
+
+    return await batch.commit();
   }
 }

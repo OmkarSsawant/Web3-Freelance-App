@@ -61,8 +61,8 @@ class _BidChoosingScreenState extends State<BidChoosingScreen> {
     await store.approveBid(b, projectOwnerCred.address.hex);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
-    await Future.delayed(Durations.extralong4);
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // await Future.delayed(Durations.extralong4);
+    // Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _openAttachmentFile(BuildContext context, String? docUrl) async {

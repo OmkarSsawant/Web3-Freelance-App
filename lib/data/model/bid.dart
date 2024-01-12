@@ -39,6 +39,7 @@ class Bid {
         amount: data["amount"].toString(),
         proposal: data["propsal"].toString(),
         bidder: bidder,
-        attachments: data["attachments"]);
+        attachments:
+            data["attachments"].map<String>((e) => e as String).toList());
   }
 }
