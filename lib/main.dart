@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/developer_registration/registration_screen.dart';
-import 'package:web3_freelancer/presentation/project_owner/dashboard.dart';
+import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/presentation/project_owner/owner_profile.dart';
+import 'package:web3_freelancer/presentation/project_owner/project_lister.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
@@ -63,8 +64,41 @@ class _MyAppState extends State<MyApp> {
                       );
                     }
 
-                    return OwnerDashboard();
+                    return TempGateway();
                   }),
             ));
+  }
+}
+
+class TempGateway extends StatelessWidget {
+  const TempGateway({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Choose Role"),
+      ),
+      body: SizedBox(
+        width: context.screenWidth,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => HomePage()));
+                  },
+                  child: const Text("Find Work")),
+              FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => OwnerProjectsScreen()));
+                  },
+                  child: const Text("Upload Project")),
+            ]),
+      ),
+    );
   }
 }

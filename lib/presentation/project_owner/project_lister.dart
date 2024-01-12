@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/developer/home_page/widgets/eightyeight_item_widget.dart';
+import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
+import 'package:web3_freelancer/presentation/project_owner/project_create.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 
 class OwnerProjectsScreen extends StatefulWidget {
@@ -11,38 +14,112 @@ class OwnerProjectsScreen extends StatefulWidget {
   State<OwnerProjectsScreen> createState() => _OwnerProjectsScreenState();
 }
 
-class _OwnerProjectsScreenState extends State<OwnerProjectsScreen> {
-  List<Project> _allProjects = [];
+class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
+    with SingleTickerProviderStateMixin {
+  List<Project> _notBiddedProjects = [];
   List<Project> _approvedProjects = [];
   List<Project> _pendingProjects = [];
-
+  late TabController _tabController;
   @override
   void initState() {
+    _tabController = TabController(length: 3, vsync: this);
     loadProjects();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Dashboard"),
+        bottom: TabBar(
+            controller: _tabController,
+            onTap: (ti) {
+              _tabController.animateTo(ti);
+            },
+            tabs: ["Approved", "Pending", "UnBided"]
+                .map((e) => Tab(
+                      text: e,
+                    ))
+                .toList()),
+      ),
+      body: TabBarView(controller: _tabController, children: [
+        ProjectsViewer(
+            projects: _approvedProjects,
+            onTap: (p) {
+              //first check if bid is finalized
+              //yes -> Open StausUpdater
+            },
+            btnText: "Update Status"),
+        ProjectsViewer(
+            projects: _pendingProjects,
+            onTap: (project) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => BidChoosingScreen(
+                        p: project,
+                      )));
+            },
+            btnText: "Request Pending"),
+        ProjectsViewer(
+            projects: _notBiddedProjects, onTap: null, btnText: "Unbided"),
+      ]),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (c) => CreateProjectScree()));
+        },
+        icon: const Icon(Icons.create_rounded),
+        label: const Text("Create Project"),
+      ),
+    );
   }
 
   void loadProjects() async {
     final contract = context.read<FreelanceContractClient>();
     final store = context.read<FirestoreSaver>();
     var ps = (await contract.getProjectsOfOwner(projectOwnerCred.address))[0];
-    setState(() {
-      _allProjects = List.from(ps).map(Project.fromBlockchain).toList();
-    });
+    var allProjects = List.from(ps).map(Project.fromBlockchain).toList();
+    debugPrint(allProjects.toString());
     var ppIds =
         await store.getPendingProjectIdsOfOwner(projectOwnerCred.address.hex);
     var apIds =
         await store.getApprovedProjectIdsOfOwner(projectOwnerCred.address.hex);
+    debugPrint(apIds.toString());
+    debugPrint(ppIds.toString());
     setState(() {
       _pendingProjects =
-          _allProjects.where((p) => ppIds.contains(p.id)).toList();
+          allProjects.where((p) => ppIds.contains(p.id)).toList();
       _approvedProjects =
-          _allProjects.where((p) => apIds.contains(p.id)).toList();
+          allProjects.where((p) => apIds.contains(p.id)).toList();
+      _notBiddedProjects = allProjects
+          .where((p) => ![...ppIds, ...apIds].contains(p.id))
+          .toList();
     });
+  }
+}
+
+class ProjectsViewer extends StatelessWidget {
+  final List<Project> projects;
+  final Function(Project)? onTap;
+  final String btnText;
+  ProjectsViewer(
+      {super.key,
+      required this.projects,
+      required this.onTap,
+      required this.btnText});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: ListView.builder(
+        itemBuilder: (context, i) {
+          return ProjectTileWidget(
+              project: projects[i],
+              onTap: () => onTap?.call(projects[i]),
+              btnText: btnText);
+        },
+        itemCount: projects.length,
+      ),
+    );
   }
 }

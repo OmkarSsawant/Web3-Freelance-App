@@ -9,8 +9,13 @@ import 'package:web3_freelancer/widgets/custom_icon_button.dart';
 // ignore: must_be_immutable
 class ProjectTileWidget extends StatelessWidget {
   final Project project;
-
-  ProjectTileWidget({Key? key, required this.project})
+  final Function? onTap;
+  final String btnText;
+  ProjectTileWidget(
+      {Key? key,
+      required this.project,
+      required this.onTap,
+      required this.btnText})
       : super(
           key: key,
         );
@@ -99,9 +104,11 @@ class ProjectTileWidget extends StatelessWidget {
                       child: Align(
                         alignment: AlignmentDirectional.topEnd,
                         child: FilledButton.icon(
-                            label: const Text("Bid"),
-                            onPressed: () async {
-                              showPlaceBid(context, project);
+                            label: Text(btnText),
+                            onPressed: () {
+                              if (onTap != null) {
+                                onTap!();
+                              }
                             },
                             icon: const Icon(Icons.money_outlined)),
                       ),

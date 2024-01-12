@@ -8,6 +8,10 @@ extension EthBytes32 on String {
       Uint8List.fromList(utf8.encode(padRight(32).substring(0, 32)));
 }
 
+extension Debug on String {
+  void get printInDebug => debugPrint(this);
+}
+
 extension StrFromBytes on Uint8List {
   String get string => utf8.decode(this);
 }

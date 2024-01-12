@@ -189,6 +189,10 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: ProjectTileWidget(
                   project: projects[index],
+                  onTap: () async {
+                    showPlaceBid(context, projects[index]);
+                  },
+                  btnText: "Bid",
                 ),
               ),
             );
@@ -205,15 +209,20 @@ class _HomePageState extends State<HomePage> {
     // await createDumpProjects(contract);
     // debugPrint("Added Projects.");
     // await Future.delayed(Duration(seconds: 5)); //time to intialize contract
-    contract.getProjects().then((value) {
-      debugPrint(value[0][0].toString());
-      projects = value[0].map<Project>(Project.fromBlockchain).toList();
-      setState(() {});
-      var pds = projects
-          .map((p) async => ProjectDetails.fromBlockchain(
-              (await contract.getProjectDetails(p.id))[0]))
-          .toList();
-      debugPrint(pds.toString());
-    });
+    try {
+      contract.getProjects().then((value) {
+        if (value[0].isEmpty) return;
+        debugPrint(value[0][0].toString());
+        projects = value[0].map<Project>(Project.fromBlockchain).toList();
+        setState(() {});
+        var pds = projects
+            .map((p) async => ProjectDetails.fromBlockchain(
+                (await contract.getProjectDetails(p.id))[0]))
+            .toList();
+        debugPrint(pds.toString());
+      });
+    } catch (e) {
+      debugPrint("No Projects Yet");
+    }
   }
 }

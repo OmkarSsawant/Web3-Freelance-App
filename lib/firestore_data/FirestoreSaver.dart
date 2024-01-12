@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/utils.dart';
+import 'package:web3_freelancer/web3/freelance_client.dart';
 
 class FirestoreSaver {
   FirebaseFirestore get store => FirebaseFirestore.instance;
@@ -16,7 +18,7 @@ class FirestoreSaver {
         .collection("projects")
         .doc(b.projectId.toString())
         .collection("bids")
-        .doc("0xcurrentuerdev")
+        .doc(creds.address.hex)
         .set(b.toJson());
   }
 
@@ -65,11 +67,9 @@ class FirestoreSaver {
   }
 
   Future<List<BigInt>> getPendingProjectIdsOfOwner(String owner) async {
-    return (await store
-            .collection("owners")
-            .doc(owner)
-            .collection("projects")
-            .get())
+    var ref = (store.collection("owners").doc(owner).collection("projects"));
+    ref.path.printInDebug;
+    return (await ref.get())
         .docs
         .map<BigInt>((e) => BigInt.parse(e.id))
         .toList();

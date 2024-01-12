@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
-import 'package:web3_freelancer/presentation/project_owner/dashboard.dart';
+import 'package:web3_freelancer/presentation/project_owner/project_lister.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 
@@ -179,7 +179,7 @@ class _OwnerRegistrationScreenState extends State<OwnerRegistrationScreen> {
           .showSnackBar(SnackBar(content: Text("Registered at Txn $txn")));
       await Future.delayed(Durations.short2);
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (c) => OwnerDashboard()));
+          .push(MaterialPageRoute(builder: (c) => OwnerProjectsScreen()));
     }
   }
 }

@@ -214,7 +214,7 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
     if (fileReqUploaded) {
       final contract = context.read<FreelanceContractClient>();
       var txn = await contract.createProject(
-        EthereumAddress.fromHex("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+        projectOwnerCred.address,
         _titleEC.text,
         _sDescEC.text,
         projectType,
