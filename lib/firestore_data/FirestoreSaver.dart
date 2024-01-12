@@ -48,4 +48,34 @@ class FirestoreSaver {
             .count ??
         0;
   }
+
+  Future<List<Bid>> getPendingBids(Project p) async {
+    return (await (store
+                .collection("owners")
+                .doc(p.owner)
+                .collection("projects")
+                .doc(p.id.toString())
+                .collection("bids"))
+            .get())
+        .docs
+        .map<Bid>((doc) {
+      Map<String, dynamic> data = doc.data();
+      return Bid.fromFS(data, doc.id);
+    }).toList();
+  }
+
+  approveBid(Bid b, String owner) async {
+    await store
+        .collection("owners")
+        .doc(owner)
+        .collection("projects")
+        .doc(b.projectId.toString())
+        .delete();
+    await store
+        .collection("owners")
+        .doc(owner)
+        .collection("projects-approved")
+        .doc(b.projectId.toString())
+        .set(b.toJson());
+  }
 }
