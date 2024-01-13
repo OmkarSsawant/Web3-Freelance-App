@@ -71,7 +71,9 @@ class _MyAppState extends State<MyApp> {
                 //         );
                 //       }
 
-                ProjectStatusScreen()
+                ProjectStatusScreen(
+              isOwner: false,
+            )
             // }),
             ));
   }
