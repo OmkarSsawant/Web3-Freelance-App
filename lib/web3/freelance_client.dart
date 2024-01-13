@@ -55,15 +55,6 @@ class FreelanceContractClient {
       return IOWebSocketChannel.connect(wsUrl).cast<String>();
     });
     initContractAndFunctions();
-    _eventsStream = _ethClient.events(FilterOptions.events(
-        contract: _contract, event: _contract.event("ProjectCreated")));
-
-    _eventsStream?.listen((event) {
-      if (abi != null && event.topics != null && event.data != null) {
-        var results = abi!.events[0].decodeResults(event.topics!, event.data!);
-        lastAddedProjectId = BigInt.from(results[1]);
-      }
-    });
   }
 
   void dispose() {
@@ -98,6 +89,15 @@ class FreelanceContractClient {
     _addProjectDetails = _contract.function("addProjectDetails");
     _getOngoingTaskAndPaymentTillNow =
         _contract.function("getOngoingTaskAndPaymentTillNow");
+    _eventsStream = _ethClient.events(FilterOptions.events(
+        contract: _contract, event: _contract.event("ProjectCreated")));
+
+    _eventsStream?.listen((event) {
+      if (abi != null && event.topics != null && event.data != null) {
+        var results = abi!.events[0].decodeResults(event.topics!, event.data!);
+        lastAddedProjectId = BigInt.from(results[1]);
+      }
+    });
     return true;
   }
 

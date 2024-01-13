@@ -173,9 +173,11 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
                           context: context,
                           builder: (context) {
                             return WorkStatusWidget(
-                              onAddTaskAndPays: (paysAndTasks) {
-                                tasks = paysAndTasks.keys.toList();
-                                pays = paysAndTasks.values
+                              onAddTaskAndPays: (_tasks, _pays) {
+                                debugPrint(_tasks.toString());
+                                debugPrint(_pays.toString());
+                                tasks = _tasks;
+                                pays = _pays
                                     .map((eth) => (BigInt.from(
                                         double.parse(eth) * (10 ^ 18))))
                                     .toList();

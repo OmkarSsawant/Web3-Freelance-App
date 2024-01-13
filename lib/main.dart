@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
 import 'package:web3_freelancer/presentation/developer/developer_registration/registration_screen.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/presentation/project_owner/owner_profile.dart';
@@ -22,10 +23,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseFirestore.instance.settings = Settings(
-    persistenceEnabled: false, // Set to true if you want offline persistence
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-  );
+  // FirebaseFirestore.instance.settings = Settings(
+  //   persistenceEnabled: false, // Set to true if you want offline persistence
+  //   cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  // );
 
   runApp(const MyApp());
 }
@@ -38,11 +39,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late FreelanceContractClient contract;
+  // late FreelanceContractClient contract;
   @override
   void initState() {
     super.initState();
-    contract = FreelanceContractClient();
+    // contract = FreelanceContractClient();
     // testConnections();
   }
 
@@ -50,27 +51,28 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider(create: (ctx) => contract),
+          // Provider(create: (ctx) => contract),
           Provider(create: (ctx) => FirestoreSaver())
         ],
         builder: (context, child) => MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-              ),
-              home: FutureBuilder(
-                  future: contract.initContractAndFunctions(),
-                  builder: (c, s) {
-                    if (!s.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+            debugShowCheckedModeBanner: false,
+            title: 'Web3 Freelancer',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+              useMaterial3: true,
+            ),
+            home:
+                // FutureBuilder(
+                //     future: contract.initContractAndFunctions(),
+                //     builder: (c, s) {
+                //       if (!s.hasData) {
+                //         return const Center(
+                //           child: CircularProgressIndicator(),
+                //         );
+                //       }
 
-                    return TempGateway();
-                  }),
+                ProjectStatusScreen()
+            // }),
             ));
   }
 }
