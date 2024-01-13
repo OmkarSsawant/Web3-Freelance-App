@@ -99,6 +99,15 @@ class FirestoreSaver {
         .toList();
   }
 
+  Future removeFinalizedBid(Bid bid) async {
+    return (await store
+            .collectionGroup("bids")
+            .where("projectId", isEqualTo: bid.projectId)
+            .get())
+        .docs
+        .forEach((d) => d.reference.delete());
+  }
+
   Future approveBid(Bid b, String owner) async {
     final WriteBatch batch = store.batch();
     final docsToDelete = await store

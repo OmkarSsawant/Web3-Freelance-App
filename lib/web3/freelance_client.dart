@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart'; //You can also import the browser version
+import 'package:web3_freelancer/data/model/project_data.dart';
+import 'package:web3_freelancer/freelance.g.dart';
 import 'package:web3_freelancer/main.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3dart/web3dart.dart';
@@ -29,7 +31,6 @@ class FreelanceContractClient {
       _updateProjectStatus,
       _addReview,
       _createProject,
-      _addWorksAndPays,
       _getProjectsOfOwner,
       _getProjectStatus,
       _registerDeveloper,
@@ -42,7 +43,8 @@ class FreelanceContractClient {
       _getProjects,
       _getProjectDetails,
       _addProjectDetails,
-      _getOngoingTaskAndPaymentTillNow;
+      _getOngoingTaskAndPaymentTillNow,
+      _getTaskAndPays;
 
   BigInt? lastAddedProjectId;
   Stream<FilterEvent>? _eventsStream;
@@ -73,7 +75,6 @@ class FreelanceContractClient {
     _updateProjectStatus = _contract.function("updateProjectStatus");
     _addReview = _contract.function("addReview");
     _createProject = _contract.function("createProject");
-    _addWorksAndPays = _contract.function("addWorksAndPays");
     _getProjectsOfOwner = _contract.function("getProjectsOfOwner");
     _getProjectStatus = _contract.function("getProjectStatus");
     _registerDeveloper = _contract.function("registerDeveloper");
@@ -85,19 +86,20 @@ class FreelanceContractClient {
     _getDevBidTokens = _contract.function("getDevBidTokens");
     _devPlaceBids = _contract.function("devPlaceBids");
     _getProjects = _contract.function("getProjects");
-    _getProjectDetails = _contract.function("getProjectDetails");
     _addProjectDetails = _contract.function("addProjectDetails");
+    _getProjectDetails = _contract.function("getProjectDetails");
     _getOngoingTaskAndPaymentTillNow =
         _contract.function("getOngoingTaskAndPaymentTillNow");
-    _eventsStream = _ethClient.events(FilterOptions.events(
-        contract: _contract, event: _contract.event("ProjectCreated")));
+    _getTaskAndPays = _contract.function("getTasksAndPays");
+    // _eventsStream = _ethClient.events(FilterOptions.events(
+    //     contract: _contract, event: _contract.event("ProjectCreated")));
 
-    _eventsStream?.listen((event) {
-      if (abi != null && event.topics != null && event.data != null) {
-        var results = abi!.events[0].decodeResults(event.topics!, event.data!);
-        lastAddedProjectId = BigInt.from(results[1]);
-      }
-    });
+    // _eventsStream?.listen((event) {
+    //   if (abi != null && event.topics != null && event.data != null) {
+    //     var results = abi!.events[0].decodeResults(event.topics!, event.data!);
+    //     lastAddedProjectId = BigInt.from(results[1]);
+    //   }
+    // });
     return true;
   }
 
@@ -189,15 +191,25 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
         uint _deposit_budget
     ) 
    */
-  createProject(EthereumAddress owner, String title, String shortDesc,
-      String projectType, BigInt deadline, BigInt depositBudget) async {
+  /*
+  
+        function createProject(
+        address _owner,
+        bytes32 _title,
+        bytes32 _ssrdoc_ipfs,
+        bytes32 _project_type,
+        uint _deadline,
+        uint _deposit_budget
+    ) 
+   */
+  createProject(String title, String shortDesc, String projectType,
+      BigInt deadline, BigInt depositBudget) async {
     return await _ethClient.sendTransaction(
-        creds,
+        projectOwnerCred,
         Transaction.callContract(
             contract: _contract,
             function: _createProject,
             parameters: [
-              owner,
               title.bytes32,
               projectType.bytes32,
               deadline,
@@ -212,13 +224,13 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
   function updateProjectStatus(
     uint project_id
 )  */
-  updateProjectStaus(int s) async {
+  updateProjectStaus(BigInt s) async {
     return await _ethClient.sendTransaction(
         creds,
         Transaction.callContract(
             contract: _contract,
             function: _updateProjectStatus,
-            parameters: [s.big]),
+            parameters: [s]),
         chainId: 31337);
   }
 
@@ -228,22 +240,12 @@ function addReview(uint _project_id,string memory _r)
    */
   addReview(BigInt projectId, String rev) async {
     return await _ethClient.sendTransaction(
-        creds,
+        projectOwnerCred,
         Transaction.callContract(
             contract: _contract,
             function: _addReview,
             parameters: [projectId, rev]),
         chainId: 31337);
-  }
-
-  addWorkAndPays(
-      BigInt projectId, List<String> works, List<BigInt> pays) async {
-    return await _ethClient.sendTransaction(
-        creds,
-        Transaction.callContract(
-            contract: _contract,
-            function: _addWorksAndPays,
-            parameters: [projectId, works, pays]));
   }
 
   Future<List> getProjects() async {
@@ -266,27 +268,34 @@ function addReview(uint _project_id,string memory _r)
         string memory _eligiblity_criteria,
         string[] memory _roles
     )public returns (bool) */
-  Future addProjectDetails(
-      BigInt projectId,
+  Future addProjectDetailsToRecent(
       String description,
       List<String> techStack,
       String ssrdocIPFS,
       String eligibilityCriteria,
-      List<String> roles) async {
+      List<String> roles,
+      List<String> works,
+      List<BigInt> pays) async {
     return await _ethClient.sendTransaction(
-        creds,
+        projectOwnerCred,
         Transaction.callContract(
             contract: _contract,
             function: _addProjectDetails,
             parameters: [
-              projectId,
               description,
               techStack.map((e) => e.bytes32).toList(),
               ssrdocIPFS.bytes32,
               eligibilityCriteria,
-              roles
+              roles,
+              works,
+              pays
             ]),
         chainId: 31337);
+  }
+
+  Future<List<dynamic>> getTasksAndPays(BigInt projectId) async {
+    return await _ethClient.call(
+        contract: _contract, function: _getTaskAndPays, params: [projectId]);
   }
 
   /*

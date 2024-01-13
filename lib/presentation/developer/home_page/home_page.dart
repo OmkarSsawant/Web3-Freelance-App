@@ -22,19 +22,19 @@ import 'package:web3_freelancer/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:web3_freelancer/widgets/app_bar/custom_app_bar.dart';
 import 'package:web3_freelancer/widgets/custom_search_view.dart';
 
-Future createDumpProjects(FreelanceContractClient contract) async {
-  for (var i = 0; i < 7; i++) {
-    await contract.createProject(
-        projectOwnerCred.address,
-        "Project Web$i",
-        "A best Project",
-        "flutter$i",
-        DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
-        BigInt.from(100000000000000000));
-    await contract.addProjectDetails(i.big, "description$i", ["techStack"],
-        "ssrdocIPFS$i", "eligibilityCriteria$i", ["roles"]);
-  }
-}
+// Future createDumpProjects(FreelanceContractClient contract) async {
+//   for (var i = 0; i < 7; i++) {
+//     await contract.createProject(
+//         projectOwnerCred.address,
+//         "Project Web$i",
+//         "A best Project",
+//         "flutter$i",
+//         DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch.big,
+//         BigInt.from(100000000000000000));
+//     await contract.addProjectDetails(i.big, "description$i", ["techStack"],
+//         "ssrdocIPFS$i", "eligibilityCriteria$i", ["roles"]);
+//   }
+// }
 
 // ignore_for_file: must_be_immutable
 class HomePage extends StatefulWidget {
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
 
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => BidChoosingScreen(
-                    onTap: (context, store, Bid bid) async {
+                    onTap: (context, FirestoreSaver store, Bid bid) async {
                       var dev = EthereumAddress.fromHex(bid.bidder!);
                       debugPrint("dev: $dev");
                       var txn = await contract.finalizeProjectBid(
@@ -149,10 +149,14 @@ class _HomePageState extends State<HomePage> {
                           bid.proposal,
                           bid.attachments,
                           dev);
+                      //Remove Bid From Firestore
+
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               "Project Contract Finalized $txn .Kindly check the chat screen")));
                       debugPrint(txn);
+                      await Future.delayed(Durations.extralong4);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     bidsFuture: store.getApprovedBidsOfDev(creds.address.hex),
                     btnText: "Agree & Confirm")));

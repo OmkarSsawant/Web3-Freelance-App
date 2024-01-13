@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:web3_freelancer/freelance.g.dart';
 import 'package:web3_freelancer/presentation/project_owner/widget/work_satus.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
@@ -239,30 +240,27 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
   void _createProject(BuildContext context) async {
     if (fileReqUploaded) {
       final contract = context.read<FreelanceContractClient>();
+
       var txn = await contract.createProject(
-        projectOwnerCred.address,
-        _titleEC.text,
-        _sDescEC.text,
-        projectType,
-        deadline!.millisecondsSinceEpoch.big,
-        BigInt.from(double.parse(_depoBudEC.text.trim()) * (pow(10, 18))),
-      );
-      if (contract.lastAddedProjectId != null) {
-        var txn2 = await contract.addProjectDetails(
-            contract.lastAddedProjectId!,
-            _longDescEC.text,
-            _techstackEC.text.split(','),
-            "ipfs://ssrc_doc",
-            _eliCriEC.text,
-            _rolesEC.text.split(','));
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Create Prject by txn $txn")));
-        await Future.delayed(Durations.extralong4 * 3);
-        Navigator.of(context).pop();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to add project Details")));
-      }
+          _titleEC.text,
+          _sDescEC.text,
+          projectType,
+          deadline!.millisecondsSinceEpoch.big,
+          BigInt.from(double.parse(_depoBudEC.text.trim()) * (pow(10, 18))));
+
+      var finalTxn = await contract.addProjectDetailsToRecent(
+          _longDescEC.text,
+          _techstackEC.text.split(','),
+          "ipfs://ssrc_doc",
+          _eliCriEC.text,
+          _rolesEC.text.split(','),
+          tasks,
+          pays);
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Create Project by txn $txn")));
+      await Future.delayed(Durations.extralong4 * 3);
+      Navigator.of(context).pop();
     }
   }
 }

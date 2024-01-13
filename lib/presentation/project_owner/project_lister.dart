@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/widgets/eightyeight_item_widget.dart';
 import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/presentation/project_owner/project_create.dart';
@@ -50,8 +51,10 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
         ProjectsViewer(
             projects: _approvedProjects,
             onTap: (p) {
-              //first check if bid is finalized
-              //yes -> Open StausUpdater
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ProjectStatusScreen(
+                      isOwner: projectOwnerCred.address.hex == p.owner,
+                      projectId: p.id)));
             },
             btnText: "Update Status"),
         ProjectsViewer(
@@ -85,8 +88,8 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
     await store.approveBid(b, projectOwnerCred.address.hex);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
-    // await Future.delayed(Durations.extralong4);
-    // Navigator.of(context).popUntil((route) => route.isFirst);
+    await Future.delayed(Durations.extralong4);
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void loadProjects() async {

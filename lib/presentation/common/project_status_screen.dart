@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:web3_freelancer/data/model/task_pays.dart';
 import 'package:web3_freelancer/utils.dart';
+import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3dart/web3dart.dart';
 
 class ProjectStatusScreen extends StatefulWidget {
-  final bool isOwner;
-  const ProjectStatusScreen({super.key, required this.isOwner});
+  bool isOwner;
+  final BigInt projectId;
+  ProjectStatusScreen(
+      {super.key, required this.isOwner, required this.projectId});
 
   @override
   State<ProjectStatusScreen> createState() => _ProjectStatusScreenState();
@@ -13,12 +19,14 @@ class ProjectStatusScreen extends StatefulWidget {
 class _ProjectStatusScreenState extends State<ProjectStatusScreen> {
   @override
   void initState() {
+    load();
     super.initState();
   }
 
-  int lastStage = 2;
+  TaskAndPays? taskAndPays;
   @override
   Widget build(BuildContext context) {
+    final _contract = context.read<FreelanceContractClient>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Project Status"),
@@ -28,26 +36,31 @@ class _ProjectStatusScreenState extends State<ProjectStatusScreen> {
         child: Padding(
           padding: EdgeInsets.only(left: context.screenWidth * 0.05),
           child: ListView.builder(
-              itemCount: 7,
+              itemCount: taskAndPays?.tasks.length ?? 0,
               itemBuilder: (context, index) {
                 return TrackingStepWidget(
                     i: index,
-                    lastIndex: 6,
-                    title: "title$index",
-                    date: "0.$index eth",
-                    isNextCompleted: index < lastStage - 1,
-                    completed: index < lastStage);
+                    lastIndex: taskAndPays!.pays.length - 1,
+                    title: taskAndPays!.tasks[index],
+                    date:
+                        "${EtherAmount.inWei(taskAndPays!.pays[index]).getValueInUnit(EtherUnit.ether)} eth",
+                    isNextCompleted: index < taskAndPays!.ongoingIndex.toInt(),
+                    completed: index <= taskAndPays!.ongoingIndex.toInt());
               }),
         ),
       ),
-      floatingActionButton: widget.isOwner
+      floatingActionButton: (widget.isOwner)
           ? FloatingActionButton.extended(
               icon: const Icon(Icons.verified),
-              onPressed: () {
-                setState(() {
-                  lastStage++;
-                });
-                if (lastStage == 7) {
+              onPressed: () async {
+                if (taskAndPays == null) return;
+
+                var txn = await _contract.updateProjectStaus(widget.projectId);
+                debugPrint("Updated : $txn");
+                load();
+
+                if ((taskAndPays!.tasks.length - 1).big ==
+                    taskAndPays!.ongoingIndex) {
                   //Approve
                   //mark bc status completed
                   //gen. bill
@@ -76,7 +89,10 @@ class _ProjectStatusScreenState extends State<ProjectStatusScreen> {
                               ),
                               FilledButton(
                                   onPressed: () {
-                                    //close project
+                                    setState(() {
+                                      widget.isOwner = false;
+                                      //to now make stages read only
+                                    });
                                   },
                                   child: const Text("Done"))
                             ],
@@ -88,6 +104,13 @@ class _ProjectStatusScreenState extends State<ProjectStatusScreen> {
               label: const Text("Approve and Move Forward"))
           : null,
     );
+  }
+
+  void load() async {
+    final _contract = context.read<FreelanceContractClient>();
+    taskAndPays = TaskAndPays.fromBlockchain(
+        (await _contract.getTasksAndPays(widget.projectId)));
+    setState(() {});
   }
 }
 

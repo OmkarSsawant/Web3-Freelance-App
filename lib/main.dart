@@ -39,11 +39,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // late FreelanceContractClient contract;
+  late FreelanceContractClient contract;
   @override
   void initState() {
     super.initState();
-    // contract = FreelanceContractClient();
+    contract = FreelanceContractClient();
     // testConnections();
   }
 
@@ -51,30 +51,26 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          // Provider(create: (ctx) => contract),
+          Provider(create: (ctx) => contract),
           Provider(create: (ctx) => FirestoreSaver())
         ],
         builder: (context, child) => MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Web3 Freelancer',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-              useMaterial3: true,
-            ),
-            home:
-                // FutureBuilder(
-                //     future: contract.initContractAndFunctions(),
-                //     builder: (c, s) {
-                //       if (!s.hasData) {
-                //         return const Center(
-                //           child: CircularProgressIndicator(),
-                //         );
-                //       }
-
-                ProjectStatusScreen(
-              isOwner: false,
-            )
-            // }),
+              debugShowCheckedModeBanner: false,
+              title: 'Web3 Freelancer',
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+                useMaterial3: true,
+              ),
+              home: FutureBuilder(
+                  future: contract.initContractAndFunctions(),
+                  builder: (c, s) {
+                    if (!s.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return TempGateway();
+                  }),
             ));
   }
 }

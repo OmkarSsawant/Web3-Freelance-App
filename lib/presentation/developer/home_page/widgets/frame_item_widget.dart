@@ -1,5 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
+import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
@@ -91,10 +93,14 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                           ),
                           SizedBox(height: 17),
                           FilledButton(
-                            onPressed: null,
-                            child: Text(snap.data != null
-                                ? snap.data![0][0].toString()
-                                : ""),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ProjectStatusScreen(
+                                        isOwner: false,
+                                        projectId: project.id,
+                                      )));
+                            },
+                            child: const Text("Show Status"),
                           )
                         ],
                       ),

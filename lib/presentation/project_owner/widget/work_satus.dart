@@ -32,7 +32,7 @@ class _WorkStatusWidgetState extends State<WorkStatusWidget> {
                   itemBuilder: (context, index) {
                     return SizedBox(
                       child: Dismissible(
-                        key: ValueKey(_payEcs),
+                        key: ValueKey("$_payEcs$index"),
                         background: Container(
                           color: Colors.red[400],
                         ),
