@@ -44,6 +44,10 @@ class FreelanceContractClient {
       _addProjectDetails,
       _getOngoingTaskAndPaymentTillNow;
 
+  BigInt? lastAddedProjectId;
+  Stream<FilterEvent>? _eventsStream;
+  ContractAbi? abi;
+
   //,Credentials get _creds =>
   FreelanceContractClient() {
     _client = Client();
@@ -51,13 +55,26 @@ class FreelanceContractClient {
       return IOWebSocketChannel.connect(wsUrl).cast<String>();
     });
     initContractAndFunctions();
+    _eventsStream = _ethClient.events(FilterOptions.events(
+        contract: _contract, event: _contract.event("ProjectCreated")));
+
+    _eventsStream?.listen((event) {
+      if (abi != null && event.topics != null && event.data != null) {
+        var results = abi!.events[0].decodeResults(event.topics!, event.data!);
+        lastAddedProjectId = BigInt.from(results[1]);
+      }
+    });
+  }
+
+  void dispose() {
+    _eventsStream = null;
   }
 
   Future initContractAndFunctions() async {
     print(
         "On ChainId : ${await _ethClient.getChainId()} and on networkId : ${await _ethClient.getNetworkId()}");
-    var abi = await loadContractAbi();
-    _contract = DeployedContract(abi,
+    abi = await loadContractAbi();
+    _contract = DeployedContract(abi!,
         EthereumAddress.fromHex("0x5FbDB2315678afecb367f032d93F642f64180aa3"));
     _getName = _contract.function("getName");
     _registerProjectOwner = _contract.function("registerProjectOwner");

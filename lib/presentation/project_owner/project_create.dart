@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:web3_freelancer/presentation/project_owner/widget/work_satus.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/credentials.dart';
@@ -33,6 +34,8 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
       _eliCriEC = TextEditingController();
   DateTime? deadline;
   String projectType = "web";
+  List<String> tasks = [];
+  List<BigInt> pays = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +163,28 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
                       }
                     },
                     icon: const Icon(Icons.approval),
-                    label: const Text(" Upload License  ")),
+                    label: const Text(" Upload SSRDOC  ")),
+                const SizedBox(
+                  height: 20,
+                ),
+                FilledButton.icon(
+                    onPressed: () async {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return WorkStatusWidget(
+                              onAddTaskAndPays: (paysAndTasks) {
+                                tasks = paysAndTasks.keys.toList();
+                                pays = paysAndTasks.values
+                                    .map((eth) => (BigInt.from(
+                                        double.parse(eth) * (10 ^ 18))))
+                                    .toList();
+                              },
+                            );
+                          });
+                    },
+                    icon: const Icon(Icons.schedule_rounded),
+                    label: const Text(" Add Work And Pays")),
                 const SizedBox(
                   height: 20,
                 ),
@@ -221,11 +245,22 @@ class _CreateProjectScreeState extends State<CreateProjectScree> {
         deadline!.millisecondsSinceEpoch.big,
         BigInt.from(double.parse(_depoBudEC.text.trim()) * (pow(10, 18))),
       );
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Create Prject by txn $txn")));
-      await Future.delayed(Durations.extralong4 * 3);
-      Navigator.of(context).pop();
+      if (contract.lastAddedProjectId != null) {
+        var txn2 = await contract.addProjectDetails(
+            contract.lastAddedProjectId!,
+            _longDescEC.text,
+            _techstackEC.text.split(','),
+            "ipfs://ssrc_doc",
+            _eliCriEC.text,
+            _rolesEC.text.split(','));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Create Prject by txn $txn")));
+        await Future.delayed(Durations.extralong4 * 3);
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to add project Details")));
+      }
     }
   }
 }
