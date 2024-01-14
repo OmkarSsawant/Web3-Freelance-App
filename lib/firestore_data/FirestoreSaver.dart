@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/utils.dart';
@@ -143,5 +146,43 @@ class FirestoreSaver {
         .collection("bids")
         .doc(b.bidder)
         .set(b.toJson());
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> subscribeMessages(
+      String pku1, String pku2) {
+    var ids = [pku1, pku2];
+    ids.sort();
+    String roomId = ids.join("-");
+    return store.collection("chats").doc(roomId).snapshots();
+  }
+
+  Future updateMessages(
+      String pku1, String pku2, Map<String, dynamic> json) async {
+    var ids = [pku1, pku2];
+    ids.sort();
+    String roomId = ids.join("-");
+    return await store.collection("chats").doc(roomId).set(json);
+  }
+
+  void uploadMessagePdfFile(String user, Uint8List file, onUploaded) {
+    var ref = fileStore
+        .ref("messages-files-$user")
+        .child("${DateTime.timestamp().toIso8601String()}.pdf");
+
+    ref
+        .putData(file)
+        .whenComplete(() async => onUploaded(await ref.getDownloadURL()));
+  }
+
+  void uploadMessageImageFile(Uint8List bytes, String user, String hex,
+      XFile file, Function(String uri) onUploaded) async {
+    String path =
+        "msg-images/${DateTime.now().millisecondsSinceEpoch}.${file.mimeType?.split('/')[1]}";
+    var ref = fileStore.ref().child(path);
+    debugPrint(path);
+    ref.putData(bytes).whenComplete(() async {
+      await ref.updateMetadata(SettableMetadata(contentType: file.mimeType));
+      onUploaded(await ref.getDownloadURL());
+    });
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
 import 'package:web3_freelancer/presentation/developer/developer_registration/registration_screen.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
@@ -69,7 +70,9 @@ class _MyAppState extends State<MyApp> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                    return TempGateway();
+                    return ChatPage(
+                        me: projectOwnerCred.address.hex,
+                        other: creds.address.hex);
                   }),
             ));
   }
