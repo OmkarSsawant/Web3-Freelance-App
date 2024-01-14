@@ -132,4 +132,16 @@ class FirestoreSaver {
 
     return await batch.commit();
   }
+
+  Future signBid(Bid b) async {
+    b.signed = true;
+    return await store
+        .collection("owners")
+        .doc(b.owner)
+        .collection("projects-approved")
+        .doc(b.projectId.toString())
+        .collection("bids")
+        .doc(b.bidder)
+        .set(b.toJson());
+  }
 }

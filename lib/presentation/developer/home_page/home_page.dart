@@ -149,8 +149,8 @@ class _HomePageState extends State<HomePage> {
                           bid.proposal,
                           bid.attachments,
                           dev);
-                      //Remove Bid From Firestore
-
+                      //Update Bid From Firestore
+                      await store.signBid(bid);
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               "Project Contract Finalized $txn .Kindly check the chat screen")));
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
     return Align(
       alignment: Alignment.centerRight,
       child: SizedBox(
-        height: context.screenHeight * 0.25,
+        height: context.screenHeight * 0.3,
         child: ListView.separated(
           padding: EdgeInsets.only(left: 24),
           scrollDirection: Axis.horizontal,

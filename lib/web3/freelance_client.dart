@@ -68,7 +68,7 @@ class FreelanceContractClient {
         "On ChainId : ${await _ethClient.getChainId()} and on networkId : ${await _ethClient.getNetworkId()}");
     abi = await loadContractAbi();
     _contract = DeployedContract(abi!,
-        EthereumAddress.fromHex("0x5FbDB2315678afecb367f032d93F642f64180aa3"));
+        EthereumAddress.fromHex("0x8464135c8f25da09e49bc8782676a84730c318bc"));
     _getName = _contract.function("getName");
     _registerProjectOwner = _contract.function("registerProjectOwner");
     _finalizeProjectBid = _contract.function("finalizeProjectBid");

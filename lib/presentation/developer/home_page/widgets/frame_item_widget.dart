@@ -30,6 +30,7 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                 .read<FreelanceContractClient>()
                 .getOngoingTaskAndPaymentTillNow(project.id),
             builder: (context, snap) {
+              debugPrint(snap.data?.toString());
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: AppDecoration.fillPrimary.copyWith(
@@ -70,7 +71,7 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                             opacity: 0.8,
                             child: Text(
                               snap.data != null
-                                  ? snap.data![0][0].toString()
+                                  ? snap.data![0].toString()
                                   : ".",
                               style: CustomTextStyles
                                   .labelLargeOnPrimaryContainerSemiBold,
@@ -80,7 +81,7 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                           Opacity(
                             opacity: 0.64,
                             child: Text(
-                              "paid : ${snap.data != null ? snap.data![0][2].toString() : "."}",
+                              "paid : ${snap.data != null ? snap.data![2].toString() : "."}",
                               style: CustomTextStyles
                                   .labelLargeOnPrimaryContainer_1,
                             ),

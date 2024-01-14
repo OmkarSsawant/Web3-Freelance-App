@@ -10,21 +10,25 @@ class Bid {
   final String proposal;
   final List<String> attachments;
   final String? bidder;
+  bool signed;
   Bid(
       {required this.owner,
       required this.projectId,
       required this.amount,
       required this.proposal,
       this.bidder,
+      this.signed = false,
       required this.attachments});
 
   factory Bid.fromValues(String owner, String projectId, String amount,
-      String propsal, List<String> attachments) {
+      String propsal, List<String> attachments,
+      {bool signed = false}) {
     return Bid(
         owner: owner,
         projectId: BigInt.parse(projectId),
         amount: amount,
         proposal: propsal,
+        signed: signed,
         attachments: attachments);
   }
 
@@ -34,7 +38,8 @@ class Bid {
         "amount": amount,
         "propsal": proposal,
         "attachments": attachments,
-        "bidder": bidder
+        "bidder": bidder,
+        "signed": signed
       };
 
   factory Bid.fromFS(Map<String, dynamic> data, String bidder) {
@@ -44,6 +49,7 @@ class Bid {
         amount: data["amount"].toString(),
         proposal: data["propsal"].toString(),
         bidder: bidder,
+        signed: data["signed"],
         attachments:
             data["attachments"].map<String>((e) => e as String).toList());
   }

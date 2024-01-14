@@ -35,7 +35,8 @@ class _BidChoosingScreenState extends State<BidChoosingScreen> {
                 child: Text("No Bids Yet"),
               );
             }
-            final bids = snap.data!;
+            final bids =
+                snap.data!.where((element) => !element.signed).toList();
             return ListView.builder(
                 itemCount: bids.length,
                 itemBuilder: (context, index) => ExpansionTile(
