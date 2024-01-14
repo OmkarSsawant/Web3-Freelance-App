@@ -49,6 +49,7 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
       ),
       body: TabBarView(controller: _tabController, children: [
         ProjectsViewer(
+            showChat: true,
             projects: _approvedProjects,
             onTap: (p) {
               Navigator.of(context).push(MaterialPageRoute(
@@ -122,11 +123,13 @@ class ProjectsViewer extends StatelessWidget {
   final List<Project> projects;
   final Function(Project)? onTap;
   final String btnText;
+  final bool showChat;
   ProjectsViewer(
       {super.key,
       required this.projects,
       required this.onTap,
-      required this.btnText});
+      required this.btnText,
+      this.showChat = false});
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +138,7 @@ class ProjectsViewer extends StatelessWidget {
         itemBuilder: (context, i) {
           return ProjectTileWidget(
               project: projects[i],
+              enableChat: showChat,
               onTap: () => onTap?.call(projects[i]),
               btnText: btnText);
         },

@@ -70,9 +70,7 @@ class _MyAppState extends State<MyApp> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                    return ChatPage(
-                        me: projectOwnerCred.address.hex,
-                        other: creds.address.hex);
+                    return TempGateway();
                   }),
             ));
   }

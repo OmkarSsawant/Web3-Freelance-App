@@ -1,5 +1,7 @@
 import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
+import 'package:web3_freelancer/web3/freelance_client.dart';
 
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +13,13 @@ class ProjectTileWidget extends StatelessWidget {
   final Project project;
   final Function? onTap;
   final String btnText;
+  final bool enableChat;
   ProjectTileWidget(
       {Key? key,
       required this.project,
       required this.onTap,
-      required this.btnText})
+      required this.btnText,
+      this.enableChat = false})
       : super(
           key: key,
         );
@@ -101,16 +105,37 @@ class ProjectTileWidget extends StatelessWidget {
                     SizedBox(height: 13),
                     Container(
                       width: double.infinity,
-                      child: Align(
-                        alignment: AlignmentDirectional.topEnd,
-                        child: FilledButton.icon(
-                            label: Text(btnText),
-                            onPressed: () {
-                              if (onTap != null) {
-                                onTap!();
-                              }
-                            },
-                            icon: const Icon(Icons.money_outlined)),
+                      child: Row(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topEnd,
+                            child: FilledButton.icon(
+                                label: Text(btnText),
+                                onPressed: () {
+                                  if (onTap != null) {
+                                    onTap!();
+                                  }
+                                },
+                                icon: const Icon(Icons.money_outlined)),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          if (enableChat)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => ChatPage(
+                                                projectId: project.id,
+                                                other: creds.address.hex,
+                                                me: project.owner)));
+                                  },
+                                  icon: const Icon(Icons.chat_bubble_rounded)),
+                            )
+                        ],
                       ),
                     ),
                   ],

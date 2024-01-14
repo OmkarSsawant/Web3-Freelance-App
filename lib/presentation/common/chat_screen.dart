@@ -20,7 +20,12 @@ import 'package:web3_freelancer/web3/freelance_client.dart';
 
 class ChatPage extends StatefulWidget {
   final String other, me;
-  const ChatPage({super.key, required this.other, required this.me});
+  final BigInt projectId;
+  const ChatPage(
+      {super.key,
+      required this.other,
+      required this.me,
+      required this.projectId});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -42,8 +47,11 @@ class _ChatPageState extends State<ChatPage> {
 
   void _addMessage(types.Message message) async {
     _messages.insert(0, message);
-    await store?.updateMessages(widget.other, widget.me,
-        {"messages": _messages.map((e) => e.toJson()).toList()});
+    await store?.updateMessages(
+        widget.other,
+        widget.me,
+        {"messages": _messages.map((e) => e.toJson()).toList()},
+        widget.projectId);
   }
 
   void _handleAttachmentPressed() {
@@ -230,7 +238,7 @@ class _ChatPageState extends State<ChatPage> {
         body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
             stream: context
                 .read<FirestoreSaver>()
-                .subscribeMessages(widget.me, widget.other),
+                .subscribeMessages(widget.me, widget.other, widget.projectId),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 _messages = ((snapshot.data?.data()?["messages"] as List?)

@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
+import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/utils.dart';
@@ -93,15 +94,36 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                                 CustomTextStyles.labelLargeOnPrimaryContainer_3,
                           ),
                           SizedBox(height: 17),
-                          FilledButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ProjectStatusScreen(
-                                        isOwner: false,
-                                        projectId: project.id,
-                                      )));
-                            },
-                            child: const Text("Show Status"),
+                          Row(
+                            children: [
+                              FilledButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ProjectStatusScreen(
+                                            isOwner: false,
+                                            projectId: project.id,
+                                          )));
+                                },
+                                child: const Text("Show Status"),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => ChatPage(
+                                                  projectId: project.id,
+                                                  other: project.owner,
+                                                  me: creds.address.hex)));
+                                    },
+                                    icon:
+                                        const Icon(Icons.chat_bubble_rounded)),
+                              )
+                            ],
                           )
                         ],
                       ),

@@ -149,19 +149,19 @@ class FirestoreSaver {
   }
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> subscribeMessages(
-      String pku1, String pku2) {
+      String pku1, String pku2, BigInt projectId) {
     var ids = [pku1, pku2];
     ids.sort();
     String roomId = ids.join("-");
-    return store.collection("chats").doc(roomId).snapshots();
+    return store.collection("chats").doc("$projectId-$roomId").snapshots();
   }
 
-  Future updateMessages(
-      String pku1, String pku2, Map<String, dynamic> json) async {
+  Future updateMessages(String pku1, String pku2, Map<String, dynamic> json,
+      BigInt projectId) async {
     var ids = [pku1, pku2];
     ids.sort();
     String roomId = ids.join("-");
-    return await store.collection("chats").doc(roomId).set(json);
+    return await store.collection("chats").doc("$projectId-$roomId").set(json);
   }
 
   void uploadMessagePdfFile(String user, Uint8List file, onUploaded) {
