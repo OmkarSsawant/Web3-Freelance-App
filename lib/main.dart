@@ -19,9 +19,13 @@ import 'package:web3_freelancer/presentation/project_owner/project_lister.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'firebase_options.dart';
 
+
+const projectId="369940517e9ba400824f09472c6c15e6";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -43,40 +47,90 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late FreelanceContractClient contract;
+  // late FreelanceContractClient contract;
+  late W3MService _web3Service;
   @override
   void initState() {
     super.initState();
-    contract = FreelanceContractClient();
+    // contract = FreelanceContractClient();
     // testConnections();
+    initWeb3WalletConnect();
+  }
+
+  void initWeb3WalletConnect()async{
+     _web3Service = W3MService(
+      projectId: projectId,
+      metadata: const PairingMetadata(
+        name: 'Web3Freelancer',
+        description: 'Web3Modal Flutter SignIn',
+        url: 'https://www.walletconnect.com/',
+        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+        redirect: Redirect(
+          native: 'web3freelancer://',
+          universal: 'https://www.walletconnect.com',
+        ),
+      ),
+    );
+     W3MChainPresets.chains.putIfAbsent("31337", () =>
+         W3MChainInfo(
+           chainName: 'Hardhat',
+           namespace: 'eip155:1',
+           chainId: '31337',
+           tokenName: 'ETH',
+           rpcUrl: apiUrl,
+         )
+     );
+    await _web3Service.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          Provider(create: (ctx) => contract),
-          Provider(create: (ctx) => FirestoreSaver()),
-          Provider(create: (ctx) => IpfsClient()),
-        ],
-        builder: (context, child) => MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Web3 Freelancer',
+    return  MaterialApp(
+      title: "Web3 Freelancer",
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
                 useMaterial3: true,
               ),
-              home: FutureBuilder(
-                  future: contract.initContractAndFunctions(),
-                  builder: (c, s) {
-                    if (!s.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return TempGateway();
-                  }),
-            ));
+              home: Scaffold(
+                body: SizedBox(
+                  width: context.screenWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      W3MConnectWalletButton(service: _web3Service),
+                      W3MNetworkSelectButton(service: _web3Service),
+                      W3MAccountButton(service: _web3Service)
+                    ],
+                  ),
+                ),
+              )
+    );
+
+      // MultiProvider(
+      //   providers: [
+      //     Provider(create: (ctx) => contract),
+      //     Provider(create: (ctx) => FirestoreSaver()),
+      //     Provider(create: (ctx) => IpfsClient()),
+      //   ],
+      //   builder: (context, child) => MaterialApp(
+      //         debugShowCheckedModeBanner: false,
+      //         title: 'Web3 Freelancer',
+      //         theme: ThemeData(
+      //           colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+      //           useMaterial3: true,
+      //         ),
+      //         home: FutureBuilder(
+      //             future: contract.initContractAndFunctions(),
+      //             builder: (c, s) {
+      //               if (!s.hasData) {
+      //                 return const Center(
+      //                   child: CircularProgressIndicator(),
+      //                 );
+      //               }
+      //               return TempGateway();
+      //             }),
+      //       ));
   }
 }
 

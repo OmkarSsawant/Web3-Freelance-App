@@ -52,6 +52,7 @@ dependencies:
   image_picker: ^1.0.7
   open_filex: ^4.3.4
   ipfs_client_flutter: ^1.0.7
+  web3modal_flutter: ^3.0.21
 dev_dependencies:
   flutter_test:
     sdk: flutter
