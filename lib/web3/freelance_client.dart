@@ -17,10 +17,6 @@ import 'package:web_socket_channel/io.dart';
 const IPFS_GATEWAY = "http://10.0.2.2:8188";
 const IPFS_API = "http://10.0.2.2:8188/ip4/10.0.2.2/tcp/5001";
 const String apiUrl = "http://10.0.2.2:8545/";
-Credentials creds = EthPrivateKey.fromHex(
-    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
-var projectOwnerCred = EthPrivateKey.fromHex(
-    "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d");
 const String wsUrl = "ws://10.0.2.2:8545/";
 
 class FreelanceContractClient {

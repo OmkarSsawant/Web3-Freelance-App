@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web3_freelancer/core/app_export.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -29,17 +32,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    W3MService web3Service = context.read();
     return AppBar(
-      elevation: 0,
-      toolbarHeight: height ?? 50,
       automaticallyImplyLeading: false,
+      toolbarHeight: height ?? 50,
       backgroundColor: Colors.transparent,
-      leadingWidth: leadingWidth ?? 0,
-      leading: leading,
-      title: title,
-      titleSpacing: 0,
-      centerTitle: centerTitle ?? false,
-      actions: actions,
+      actions: [
+        // W3MNetworkSelectButton(service: web3Service),
+        W3MAccountButton(service: web3Service,size: BaseButtonSize.small,),
+        if (actions != null) ...actions!,
+        W3MConnectWalletButton(service: web3Service),
+      ],
     );
   }
 

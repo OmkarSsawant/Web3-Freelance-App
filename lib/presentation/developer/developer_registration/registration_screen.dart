@@ -10,6 +10,7 @@ import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 
 class DevRegistrationScreen extends StatefulWidget {
+
   const DevRegistrationScreen({super.key});
 
   @override
@@ -24,6 +25,14 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
       _professionEC = TextEditingController();
   final ScaffoldMessengerState _messengerState = ScaffoldMessengerState();
   String? profilePhotoIPFS;
+
+  @override
+  void initState() {
+
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

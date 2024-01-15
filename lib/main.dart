@@ -24,8 +24,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'firebase_options.dart';
 
-
-const projectId="369940517e9ba400824f09472c6c15e6";
+const projectId = "369940517e9ba400824f09472c6c15e6";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -47,18 +46,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // late FreelanceContractClient contract;
+  late FreelanceContractClient contract;
   late W3MService _web3Service;
-  @override
-  void initState() {
-    super.initState();
-    // contract = FreelanceContractClient();
-    // testConnections();
-    initWeb3WalletConnect();
-  }
 
-  void initWeb3WalletConnect()async{
-     _web3Service = W3MService(
+  Future<bool> initWeb3WalletConnect() async {
+    _web3Service = W3MService(
       projectId: projectId,
       metadata: const PairingMetadata(
         name: 'Web3Freelancer',
@@ -71,66 +63,48 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
-     W3MChainPresets.chains.putIfAbsent("31337", () =>
-         W3MChainInfo(
-           chainName: 'Hardhat',
-           namespace: 'eip155:1',
-           chainId: '31337',
-           tokenName: 'ETH',
-           rpcUrl: apiUrl,
-         )
-     );
+    W3MChainPresets.chains.putIfAbsent(
+        "31337",
+        () => W3MChainInfo(
+              chainName: 'Hardhat',
+              namespace: 'eip155:1',
+              chainId: '31337',
+              tokenName: 'ETH',
+              rpcUrl: apiUrl,
+            ));
     await _web3Service.init();
+    contract = FreelanceContractClient();
+    await contract.initContractAndFunctions();
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      title: "Web3 Freelancer",
+    return MultiProvider(
+        providers: [
+          Provider(create: (ctx) => contract),
+          Provider(create: (ctx) => FirestoreSaver()),
+          Provider(create: (ctx) => IpfsClient()),
+          Provider(create: (ctx) => _web3Service),
+        ],
+        builder: (context, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Web3 Freelancer',
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
                 useMaterial3: true,
               ),
-              home: Scaffold(
-                body: SizedBox(
-                  width: context.screenWidth,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      W3MConnectWalletButton(service: _web3Service),
-                      W3MNetworkSelectButton(service: _web3Service),
-                      W3MAccountButton(service: _web3Service)
-                    ],
-                  ),
-                ),
-              )
-    );
-
-      // MultiProvider(
-      //   providers: [
-      //     Provider(create: (ctx) => contract),
-      //     Provider(create: (ctx) => FirestoreSaver()),
-      //     Provider(create: (ctx) => IpfsClient()),
-      //   ],
-      //   builder: (context, child) => MaterialApp(
-      //         debugShowCheckedModeBanner: false,
-      //         title: 'Web3 Freelancer',
-      //         theme: ThemeData(
-      //           colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-      //           useMaterial3: true,
-      //         ),
-      //         home: FutureBuilder(
-      //             future: contract.initContractAndFunctions(),
-      //             builder: (c, s) {
-      //               if (!s.hasData) {
-      //                 return const Center(
-      //                   child: CircularProgressIndicator(),
-      //                 );
-      //               }
-      //               return TempGateway();
-      //             }),
-      //       ));
+              home: FutureBuilder(
+                  future: initWeb3WalletConnect(),
+                  builder: (c, s) {
+                    if (!s.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return TempGateway();
+                  }),
+            ));
   }
 }
 
@@ -139,9 +113,13 @@ class TempGateway extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final web3Service = context.read<W3MService>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Choose Role"),
+        actions: [
+          W3MConnectWalletButton(service: web3Service)
+        ],
       ),
       body: SizedBox(
         width: context.screenWidth,
@@ -151,6 +129,12 @@ class TempGateway extends StatelessWidget {
             children: [
               FilledButton(
                   onPressed: () {
+                    if(web3Service.isConnected){
+                W
+                      final dev = context.read<FreelanceContractClient>()
+                          .getDevBidTokens(CredentialsWithKnownAddress)
+                    }
+
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => HomePage()));
                   },

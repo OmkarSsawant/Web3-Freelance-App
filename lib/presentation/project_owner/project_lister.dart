@@ -8,6 +8,8 @@ import 'package:web3_freelancer/presentation/developer/home_page/widgets/eightye
 import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/presentation/project_owner/project_create.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class OwnerProjectsScreen extends StatefulWidget {
   const OwnerProjectsScreen({super.key});
@@ -33,6 +35,7 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
 
   @override
   Widget build(BuildContext context) {
+    W3MService web3Service = context.read();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dashboard"),
@@ -46,6 +49,11 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
                       text: e,
                     ))
                 .toList()),
+        actions: [
+          W3MConnectWalletButton(service: web3Service),
+          W3MNetworkSelectButton(service: web3Service),
+          W3MAccountButton(service: web3Service),
+        ],
       ),
       body: TabBarView(controller: _tabController, children: [
         ProjectsViewer(
