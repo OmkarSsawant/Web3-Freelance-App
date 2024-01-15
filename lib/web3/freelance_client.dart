@@ -14,14 +14,14 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 
-const IPFS_GATEWAY = "http://127.0.0.1:8188";
-const IPFS_API = "http://127.0.0.1:8188/ip4/127.0.0.1/tcp/5001";
-const String apiUrl = "http://127.0.0.1:8545/";
+const IPFS_GATEWAY = "http://10.0.2.2:8188";
+const IPFS_API = "http://10.0.2.2:8188/ip4/10.0.2.2/tcp/5001";
+const String apiUrl = "http://10.0.2.2:8545/";
 Credentials creds = EthPrivateKey.fromHex(
     "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
 var projectOwnerCred = EthPrivateKey.fromHex(
     "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d");
-const String wsUrl = "ws://127.0.0.1:8545/";
+const String wsUrl = "ws://10.0.2.2:8545/";
 
 class FreelanceContractClient {
   late Client _client;
@@ -66,8 +66,8 @@ class FreelanceContractClient {
   }
 
   Future initContractAndFunctions() async {
-    print(
-        "On ChainId : ${await _ethClient.getChainId()} and on networkId : ${await _ethClient.getNetworkId()}");
+    // print(
+    //     "On ChainId : ${await _ethClient.getChainId()} and on networkId : ${await _ethClient.getNetworkId()}");
     abi = await loadContractAbi();
     _contract = DeployedContract(abi!,
         EthereumAddress.fromHex("0x8464135c8f25da09e49bc8782676a84730c318bc"));

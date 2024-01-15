@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:io' as io;
 
 import 'package:file_picker/file_picker.dart';
