@@ -1,5 +1,9 @@
+import 'dart:html';
+import 'dart:io' as io;
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:ipfs_client_flutter/ipfs_client_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
@@ -83,10 +87,16 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
                     if (result != null && result.files.first.bytes != null) {
                       fileReqUploaded = false;
                       //Upload Profile Image to IPFS
+                      // var r = await context.read<IpfsClient>().write(
+                      //     dir:
+                      //         "dev-profile_pics/${creds.address.hex}-${result.files.first.name}",
+                      //     filePath: path,
+                      //     fileName:
+                      //         "${creds.address.hex}-${result.files.first.name}");
                     }
                   },
                   icon: const Icon(Icons.file_upload),
-                  label: const Text(" Upload Proposal  ")),
+                  label: const Text(" Upload Profile Pic  ")),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(

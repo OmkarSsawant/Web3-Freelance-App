@@ -51,6 +51,7 @@ dependencies:
   flutter_chat_ui: ^1.6.10
   image_picker: ^1.0.7
   open_filex: ^4.3.4
+  ipfs_client_flutter: ^1.0.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

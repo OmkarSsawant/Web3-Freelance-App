@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:ipfs_client_flutter/ipfs_client_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
@@ -53,7 +56,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
         providers: [
           Provider(create: (ctx) => contract),
-          Provider(create: (ctx) => FirestoreSaver())
+          Provider(create: (ctx) => FirestoreSaver()),
+          Provider(create: (ctx) => IpfsClient()),
         ],
         builder: (context, child) => MaterialApp(
               debugShowCheckedModeBanner: false,

@@ -225,7 +225,11 @@ class _HomePageState extends State<HomePage> {
                   project: projects[index],
                   onTap: projects[index].finalizedBid?.amount == "0"
                       ? () async {
-                          showPlaceBid(context, projects[index]);
+                          var success =
+                              await showPlaceBid(context, projects[index]);
+                          if (success != null && success) {
+                            load();
+                          }
                         }
                       : null,
                   btnText: projects[index].finalizedBid?.amount == "0"

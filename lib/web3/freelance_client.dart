@@ -14,6 +14,8 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 
+const IPFS_GATEWAY = "http://127.0.0.1:8188";
+const IPFS_API = "http://127.0.0.1:8188/ip4/127.0.0.1/tcp/5001";
 const String apiUrl = "http://127.0.0.1:8545/";
 Credentials creds = EthPrivateKey.fromHex(
     "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");

@@ -75,9 +75,10 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
             projects: _notBiddedProjects, onTap: null, btnText: "Unbided"),
       ]),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.of(context)
+        onPressed: () async {
+          await Navigator.of(context)
               .push(MaterialPageRoute(builder: (c) => CreateProjectScree()));
+          loadProjects();
         },
         icon: const Icon(Icons.create_rounded),
         label: const Text("Create Project"),

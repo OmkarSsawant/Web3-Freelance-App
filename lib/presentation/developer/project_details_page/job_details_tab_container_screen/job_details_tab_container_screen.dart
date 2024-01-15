@@ -304,13 +304,13 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
   }
 }
 
-void showPlaceBid(BuildContext context, Project project) {
+Future<bool?> showPlaceBid(BuildContext context, Project project) async {
   final store = context.read<FirestoreSaver>();
   final _editTextCtlr = TextEditingController();
   final _editTextPropsal = TextEditingController();
   bool fileReqUploaded = true;
   final attachments = <String>[];
-  showModalBottomSheet(
+  return await showModalBottomSheet<bool?>(
       context: context,
       builder: (context) {
         return SizedBox(
@@ -390,6 +390,7 @@ void showPlaceBid(BuildContext context, Project project) {
                       try {
                         debugPrint("Placing Bid");
                         await store.placeBid(bid);
+                        Navigator.of(context).pop(true);
                         await showDialog(
                             context: context,
                             builder: (context) {
