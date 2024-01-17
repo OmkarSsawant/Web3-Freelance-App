@@ -38,6 +38,7 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
     W3MService web3Service = context.read();
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Dashboard"),
         bottom: TabBar(
             controller: _tabController,
@@ -50,9 +51,8 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
                     ))
                 .toList()),
         actions: [
-          W3MConnectWalletButton(service: web3Service),
-          W3MNetworkSelectButton(service: web3Service),
-          W3MAccountButton(service: web3Service),
+          W3MAccountButton(service: web3Service,avatar: web3Service.tokenImageUrl,),
+          W3MConnectWalletButton(service: web3Service,),
         ],
       ),
       body: TabBarView(controller: _tabController, children: [
@@ -95,7 +95,11 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
   }
 
   _chooseBid(BuildContext context, FirestoreSaver store, Bid b) async {
-    await store.approveBid(b, context.read<W3MService>().address!);
+    final w3Service = context.read<W3MService>();
+    await store.approveBid(b, w3Service.address!);
+    var agreement =
+        "I agree to developer to give my project ${b.projectId} with a total amount of ${b.amount} payment";
+    await context.read<FreelanceContractClient>().sign(w3Service, agreement);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
     await Future.delayed(Durations.extralong4);
@@ -105,13 +109,14 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
   void loadProjects() async {
     final contract = context.read<FreelanceContractClient>();
     final store = context.read<FirestoreSaver>();
-    var ps = (await contract.getProjectsOfOwner(EthereumAddress.fromHex(context.read<W3MService>().address!)))[0];
+    String address=context.read<W3MService>().address!;
+    var ps = (await contract.getProjectsOfOwner(EthereumAddress.fromHex(address)))[0];
     var allProjects = List.from(ps).map(Project.fromBlockchain).toList();
     debugPrint(allProjects.toString());
     _allPendingBid =
-        await store.getAllPendingBidsOfOwner(context.read<W3MService>().address!);
+        await store.getAllPendingBidsOfOwner(address);
     _allApprovedBid =
-        await store.getAllApprovedBidsOfOwner(context.read<W3MService>().address!);
+        await store.getAllApprovedBidsOfOwner(address);
     var apIds = _allApprovedBid.map((e) => e.projectId).toList();
     var ppIds = _allPendingBid.map((e) => e.projectId).toList();
     debugPrint(apIds.toString());

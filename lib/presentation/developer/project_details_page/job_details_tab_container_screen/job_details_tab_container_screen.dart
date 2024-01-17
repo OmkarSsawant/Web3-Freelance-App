@@ -235,15 +235,16 @@ class ProjectDetailsScreenState extends State<ProjectDetailsScreen>
                     widget.project.deadline.toInt())
                 .format("dd-MM-yy")
                 .toString(),
-            image: ImageConstant.imgCalendar),
+            image: null,
+        icon:const Icon(Icons.calendar_month)),
         FutureBuilder(
             future: context.read<FirestoreSaver>().biddersCount(widget.project),
             builder: (context, snap) {
               return JobdetailstabcontainerItemWidget(
                 s: "Applied",
                 v: !snap.hasData ? "0" : snap.data!.toString(),
-                image: ImageConstant.imgPlus,
-              );
+                image: null,
+                  icon:const Icon(Icons.how_to_vote));
             })
       ],
     );

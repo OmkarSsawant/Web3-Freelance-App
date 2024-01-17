@@ -18,7 +18,7 @@ class FirestoreSaver {
   Future placeBid(Bid b,String u) async {
     return await store
         .collection("owners")
-        .doc(b.owner)
+        .doc(b.owner.toLowerCase())
         .collection("projects")
         .doc(b.projectId.toString())
         .collection("bids")
@@ -33,7 +33,7 @@ class FirestoreSaver {
   Future<bool> isBiddedBy(Project p, String s) async {
     return (await store
             .collection("owners")
-            .doc(p.owner)
+            .doc(p.owner.toLowerCase())
             .collection("projects")
             .doc(p.id.toString())
             .collection("bids")
@@ -45,7 +45,7 @@ class FirestoreSaver {
   Future<int> biddersCount(Project p) async {
     return (await (store
                     .collection("owners")
-                    .doc(p.owner)
+                    .doc(p.owner.toLowerCase())
                     .collection("projects")
                     .doc(p.id.toString())
                     .collection("bids"))
@@ -58,7 +58,7 @@ class FirestoreSaver {
   Future<List<Bid>> getPendingBids(Project p) async {
     return (await (store
                 .collection("owners")
-                .doc(p.owner)
+                .doc(p.owner.toLowerCase())
                 .collection("projects")
                 .doc(p.id.toString())
                 .collection("bids"))
@@ -71,10 +71,11 @@ class FirestoreSaver {
   }
 
   Future<List<Bid>> getAllPendingBidsOfOwner(String owner) async {
+    debugPrint(owner.toLowerCase());
     return (await store
             .collectionGroup("bids")
-            .where("owner", isEqualTo: owner)
-            .where("bidder", isEqualTo: null)
+            .where("owner", isEqualTo: owner.toLowerCase())
+            .where("bidder", isNull: true)
             .get())
         .docs
         .map<Bid>((d) => Bid.fromFS(d.data(), d.id))
@@ -84,7 +85,7 @@ class FirestoreSaver {
   Future<List<Bid>> getAllApprovedBidsOfOwner(String owner) async {
     return (await store
             .collectionGroup("bids")
-            .where("owner", isEqualTo: owner)
+            .where("owner", isEqualTo: owner.toLowerCase())
             .where("bidder", isNotEqualTo: null)
             .get())
         .docs
@@ -115,7 +116,7 @@ class FirestoreSaver {
     final WriteBatch batch = store.batch();
     final docsToDelete = await store
         .collection("owners")
-        .doc(owner)
+        .doc(owner.toLowerCase())
         .collection("projects")
         .doc(b.projectId.toString())
         .collection("bids")
@@ -126,11 +127,11 @@ class FirestoreSaver {
     batch.set(
         store
             .collection("owners")
-            .doc(owner)
+            .doc(owner.toLowerCase())
             .collection("projects-approved")
             .doc(b.projectId.toString())
             .collection("bids")
-            .doc(b.bidder),
+            .doc(b.bidder!.toLowerCase()),
         b.toJson());
 
     return await batch.commit();
@@ -140,11 +141,11 @@ class FirestoreSaver {
     b.signed = true;
     return await store
         .collection("owners")
-        .doc(b.owner)
+        .doc(b.owner.toLowerCase())
         .collection("projects-approved")
         .doc(b.projectId.toString())
         .collection("bids")
-        .doc(b.bidder)
+        .doc(b.bidder!.toLowerCase())
         .set(b.toJson());
   }
 

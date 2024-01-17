@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -82,8 +83,9 @@ class _MyAppState extends State<MyApp> {
             ));
 
     await _web3Service.init();
+debugPrint(_web3Service.tokenImageUrl);
 
-    contract = FreelanceContractClient(dapp);
+    contract = FreelanceContractClient();
 //     var resp = await contract.approveMethods();
 //     Uri? uri = resp.uri;
 //     if(uri!=null){
@@ -132,6 +134,8 @@ class TempGateway extends StatelessWidget {
   final W3MService web3service;
   TempGateway(this.web3service, {super.key});
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,46 +145,93 @@ class TempGateway extends StatelessWidget {
       ),
       body: SizedBox(
         width: context.screenWidth,
+        height: context.screenHeight,
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              FilledButton(
-                  onPressed: () async {
-                    final dev = await context
-                        .read<FreelanceContractClient>()
-                        .isDevRegistered();
-                    debugPrint("${web3service.address!} : $dev");
-
-                    if (web3service.isConnected) {
-                      if (!dev)
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => DevRegistrationScreen()));
-                      else
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => HomePage()));
-                    }
-                  },
-                  child: const Text("Find Work")),
-              FilledButton(
-                  onPressed: () async {
-                    final po = await context
-                        .read<FreelanceContractClient>()
-                        .isPORegistered();
-                    debugPrint("${web3service.address!} : $po");
-
-                    if (web3service.isConnected) {
-                      if (!po)
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => OwnerRegistrationScreen()));
-                      else
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => OwnerProjectsScreen()));
-                    }
-                  },
-                  child: const Text("Upload Project")),
+             Expanded(
+               child: Column(
+                 children: [
+                   SizedBox(
+                     width: context.screenWidth * .7
+                     ,
+                     height: context.screenHeight * .3,
+                     child: Card(
+                elevation: 24,
+                       child: ClipRRect(
+                           borderRadius: BorderRadius.all(Radius.circular(27)),
+                         child: InkWell(
+                           child: Image.asset("assets/images/dev.jpg",fit: BoxFit.fill,),
+                           onTap: ()async{
+                             await _handleDevGate(context);
+                           },
+                         ),
+                       ),
+                     ),
+                   ),
+               
+                   TextButton(child:Text("Find Work"),onPressed: ()async=>await _handleDevGate(context))
+                 ],
+               ),
+             ),
+              Expanded(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: context.screenWidth * .7
+                        ,
+                        height: context.screenHeight * .3,
+                        child: Card(
+                          elevation: 24,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(27)),
+                            child: InkWell(
+                              child: Image.asset("assets/images/owner.jpg",fit: BoxFit.fill,),
+                              onTap: ()async{
+                                await _handlePOGate(context);
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      TextButton(child:Text("Post Work"),onPressed: ()async=>await _handlePOGate(context))
+                    ],
+                  )),
             ]),
       ),
     );
+  }
+
+  Future<void> _handlePOGate(BuildContext context) async {
+       final po = await context
+        .read<FreelanceContractClient>()
+        .isPORegistered();
+    debugPrint("${web3service.address} : $po");
+
+    if (web3service.isConnected) {
+      if (!po)
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => OwnerRegistrationScreen()));
+      else
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => OwnerProjectsScreen()));
+    }
+  }
+
+  Future<void> _handleDevGate(BuildContext context) async {
+    final dev = await context
+        .read<FreelanceContractClient>()
+        .isDevRegistered();
+    debugPrint("${web3service.address} : $dev");
+
+    if (web3service.isConnected) {
+      if (!dev)
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => DevRegistrationScreen()));
+      else
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => HomePage()));
+    }
   }
 }

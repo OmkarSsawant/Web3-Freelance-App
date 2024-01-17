@@ -7,9 +7,7 @@ import 'package:web3_freelancer/data/model/project_data.dart';
 import 'package:web3_freelancer/freelance.g.dart';
 import 'package:web3_freelancer/main.dart';
 import 'package:web3_freelancer/utils.dart';
-import 'package:web3_freelancer/web3/creds_w3m.dart';
-import 'package:web3_freelancer/web3/lib_models/eth/ethereum_transaction.dart';
-import 'package:web3_freelancer/web3/lib_utils/crypto/eip155.dart';
+
 import 'package:web3dart/web3dart.dart';
 import 'dart:io';
 
@@ -53,11 +51,10 @@ class FreelanceContractClient {
   BigInt? lastAddedProjectId;
   Stream<FilterEvent>? _eventsStream;
   ContractAbi? abi;
-  final Web3App _dapp;
-  Credentials get _poCreds => EthPrivateKey.fromHex("TODO");
-  Credentials get _devCreds => EthPrivateKey.fromHex("TODO");
+  Credentials get _devCreds => EthPrivateKey.fromHex("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+  Credentials get _poCreds => EthPrivateKey.fromHex("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d");
 
-  FreelanceContractClient(this._dapp) {
+  FreelanceContractClient() {
     _client = Client();
     _ethClient = Web3Client(apiUrl, _client, socketConnector: () {
       return IOWebSocketChannel.connect(wsUrl).cast<String>();
@@ -70,9 +67,28 @@ class FreelanceContractClient {
   }
 
   Future write(Credentials credentials,ContractFunction fun,List params, { EtherAmount? value})async{
-    return await _ethClient.sendTransaction(credentials, Transaction.callContract(contract: _contract, function: fun, parameters: params,value: value));
+    return await _ethClient.sendTransaction(credentials,
+        Transaction.callContract(contract: _contract,
+            function: fun, parameters: params,value: value),chainId: 31337);
   }
 
+  Future sign(w3Service,message)async{
+    //Sign Agreement
+    await  w3Service.launchConnectedWallet();
+
+
+    var hash = keccakUtf8(message);
+    final hashString = '0x${bytesToHex(hash).toString()}';
+
+    await w3Service.web3App!.request(
+      topic: w3Service.session!.topic,
+      chainId: 'eip155:31337',
+      request: SessionRequestParams(
+          method: 'personal_sign',
+          params: [hashString,w3Service.address]
+      ),
+    );
+  }
 
 
   Future initContractAndFunctions() async {
@@ -170,9 +186,9 @@ class FreelanceContractClient {
 function finalizeProjectBid(uint amount,uint project_id,string memory proposal,bytes32[] memory attachments,address developer)
     /*isProjectOwner(project_id)*/
     public returns (bool _finalized) */
-  finalizeProjectBid(BigInt amount, BigInt projectId, String proposal,
+  finalizeProjectBid(W3MService service,BigInt amount, BigInt projectId, String proposal,
       List<String> attachments, EthereumAddress developer) async {
-    _dapp.onSessionExtend.subscribe((args) {});
+
     return await write(_devCreds,_finalizeProjectBid,[
               amount,
               projectId,
@@ -295,6 +311,7 @@ function addReview(uint _project_id,string memory _r)
 
   Future<bool> isDevRegistered() async {
     return (await _ethClient.call(
+      sender: _devCreds.address,
         contract: _contract,
         function: _isDevRegistered,
         params: []))[0] as bool;
@@ -302,6 +319,7 @@ function addReview(uint _project_id,string memory _r)
 
   Future<bool> isPORegistered() async {
     return (await _ethClient.call(
+      sender:_poCreds.address,
         contract: _contract, function: _isPORegistered, params: []))[0] as bool;
   }
 

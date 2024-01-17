@@ -74,7 +74,7 @@ class ProjectTileWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 5),
                               Text(
-                                project.owner,
+                                "${project.owner.substring(0,7)}...${project.owner.substring(project.owner.length-7,project.owner.length)}",
                                 style: CustomTextStyles.labelLargeGray500,
                               ),
                             ],

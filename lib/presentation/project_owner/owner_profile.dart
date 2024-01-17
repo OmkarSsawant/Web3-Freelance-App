@@ -16,7 +16,6 @@ class OwnerRegistrationScreen extends StatefulWidget {
 }
 
 class _OwnerRegistrationScreenState extends State<OwnerRegistrationScreen> {
-  String devID = "0xcurrent_user999";
   bool fileReqUploaded = true;
 
   final TextEditingController _nameEC = TextEditingController(),

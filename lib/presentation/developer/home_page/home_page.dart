@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:provider/provider.dart';
@@ -51,7 +52,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController searchController = TextEditingController();
   List<Project> projects = [], onGoing = [];
-
+  final _sc = StreamController<List<Project>>();
+  StreamSink<List<Project>>? get  _projectSink => _sc.sink;
+  Stream<List<Project>> get _projectStream => _sc.stream;
   @override
   void initState() {
     super.initState();
@@ -80,6 +83,16 @@ class _HomePageState extends State<HomePage> {
                     controller: searchController,
                     hintText: "Search...",
                     alignment: Alignment.center,
+                    onChanged: (q){
+                      var reg = RegExp(".*$q.*");
+
+                      _projectSink?.add(projects.where((element) =>
+                          reg.hasMatch(element.title)).toList());
+                      },
+                    onClear: (){
+                      _projectSink?.add(projects);
+                    },
+
                   ),
                 ),
               ),
@@ -91,9 +104,9 @@ class _HomePageState extends State<HomePage> {
                   style: CustomTextStyles.titleMedium18,
                 ),
               ),
-              SizedBox(height: 17),
+              SizedBox(height: 7),
               _buildFrame(context),
-              SizedBox(height: 22),
+              SizedBox(height: 7),
               Padding(
                 padding: EdgeInsets.only(left: 24),
                 child: Text(
@@ -134,43 +147,48 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       actions: [
-        AppbarTrailingImage(
-          onTap: () {
-            final store = context.read<FirestoreSaver>();
-            final contract = context.read<FreelanceContractClient>();
-
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => BidChoosingScreen(
-                    onTap: (context, FirestoreSaver store, Bid bid) async {
-                      var dev = EthereumAddress.fromHex(bid.bidder!);
-                      debugPrint("dev: $dev");
-                      var txn = await contract.finalizeProjectBid(
-                          BigInt.from(double.parse(bid.amount) * pow(10, 18)),
-                          bid.projectId,
-                          bid.proposal,
-                          bid.attachments,
-                          dev);
-                      //Update Bid From Firestore
-                      await store.signBid(bid);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Project Contract Finalized $txn .Kindly check the chat screen")));
-                      debugPrint(txn);
-                      await Future.delayed(Durations.extralong4);
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    },
-                    bidsFuture: store.getApprovedBidsOfDev(
-                        context.read<W3MService>().address!),
-                    btnText: "Agree & Confirm")));
+        IconButton(
+          icon: const Icon(Icons.notification_important_rounded),
+          onPressed: () {
+            _showApprovedBids(context);
           },
-          imagePath: ImageConstant.imgNotification,
-          margin: EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 13,
-          ),
+
         ),
       ],
     );
+  }
+
+  void _showApprovedBids(BuildContext context) {
+     final store = context.read<FirestoreSaver>();
+    final contract = context.read<FreelanceContractClient>();
+
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => BidChoosingScreen(
+            onTap: (context, FirestoreSaver store, Bid bid) async {
+              var dev = EthereumAddress.fromHex(bid.bidder!);
+              debugPrint("dev: $dev");
+              final w3service  = context.read<W3MService>();
+              var txn = await contract.finalizeProjectBid(
+                  w3service,
+                  BigInt.from(double.parse(bid.amount) * pow(10, 18)),
+                  bid.projectId,
+                  bid.proposal,
+                  bid.attachments,
+                  dev);
+              var agreement = "I agree to develop project ${bid.projectId} with a total amount of ${bid.amount} ";
+              await contract.sign(w3service, agreement);
+              //Update Bid From Firestore
+              await store.signBid(bid);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      "Project Contract Finalized $txn .Kindly check the chat screen")));
+              debugPrint(txn);
+              await Future.delayed(Durations.extralong4);
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+            bidsFuture: store.getApprovedBidsOfDev(
+                context.read<W3MService>().address!),
+            btnText: "Agree & Confirm")));
   }
 
   /// Section Widget
@@ -277,5 +295,11 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       debugPrint("No Projects Yet");
     }
+  }
+
+  @override
+  void dispose() {
+    _sc.close();
+    super.dispose();
   }
 }

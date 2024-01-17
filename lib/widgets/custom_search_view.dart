@@ -22,6 +22,7 @@ class CustomSearchView extends StatelessWidget {
     this.contentPadding,
     this.borderDecoration,
     this.fillColor,
+    this.onClear,
     this.filled = true,
     this.validator,
     this.onChanged,
@@ -70,6 +71,7 @@ class CustomSearchView extends StatelessWidget {
   final FormFieldValidator<String>? validator;
 
   final Function(String)? onChanged;
+  final Function()? onClear;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +123,10 @@ class CustomSearchView extends StatelessWidget {
                 right: 15,
               ),
               child: IconButton(
-                onPressed: () => controller!.clear(),
+                onPressed: () {
+                  controller!.clear();
+                  onClear?.call();
+                },
                 icon: Icon(
                   Icons.clear,
                   color: Colors.grey.shade600,

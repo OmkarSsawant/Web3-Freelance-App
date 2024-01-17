@@ -38,10 +38,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: height ?? 50,
       backgroundColor: Colors.transparent,
       actions: [
+        if(web3Service.tokenImageUrl!=null)
+        Image.network(web3Service.tokenImageUrl!,errorBuilder: (c,e,es){
+          return SizedBox();
+        }),
         // W3MNetworkSelectButton(service: web3Service),
         W3MAccountButton(service: web3Service,size: BaseButtonSize.small,),
         if (actions != null) ...actions!,
         W3MConnectWalletButton(service: web3Service),
+        SizedBox(
+          width: 7,
+        )
       ],
     );
   }

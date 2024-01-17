@@ -49,7 +49,7 @@ class Bid {
         amount: data["amount"].toString(),
         proposal: data["propsal"].toString(),
         bidder: bidder,
-        signed: bool.tryParse(data["signed"]) ?? false,
+        signed: data["signed"] ?? false,
         attachments:
             data["attachments"].map<String>((e) => e as String).toList());
   }
