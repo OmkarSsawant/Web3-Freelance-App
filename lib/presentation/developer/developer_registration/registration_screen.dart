@@ -12,7 +12,6 @@ import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class DevRegistrationScreen extends StatefulWidget {
-
   const DevRegistrationScreen({super.key});
 
   @override
@@ -30,8 +29,6 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
 
   @override
   void initState() {
-
-
     super.initState();
   }
 
@@ -138,10 +135,10 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
     if (fileReqUploaded) {
       final contract = context.read<FreelanceContractClient>();
       final s = context.read<W3MService>();
+
       var txn = await contract.registerDeveloper(
-        s.address!,
-        s.session!.topic,
-       "eip155:${s.selectedChain!.chainId}",
+          s.web3App as Web3App,
+          s.session!,
           _nameEC.text,
           profilePhotoIPFS ?? "TODO",
           _techStacksEC.text.trim().split(','),

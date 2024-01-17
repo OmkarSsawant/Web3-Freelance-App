@@ -7,11 +7,12 @@ import 'package:web3_freelancer/data/model/project_data.dart';
 import 'package:web3_freelancer/freelance.g.dart';
 import 'package:web3_freelancer/main.dart';
 import 'package:web3_freelancer/utils.dart';
+import 'package:web3_freelancer/web3/creds_w3m.dart';
 import 'package:web3_freelancer/web3/lib_models/eth/ethereum_transaction.dart';
 import 'package:web3_freelancer/web3/lib_utils/crypto/eip155.dart';
 import 'package:web3dart/web3dart.dart';
 import 'dart:io';
-import 'package:convert/convert.dart' as c;
+
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -53,13 +54,14 @@ class FreelanceContractClient {
   Stream<FilterEvent>? _eventsStream;
   ContractAbi? abi;
   final Web3App _dapp;
-  Credentials get _mCreds => EthPrivateKey.fromHex("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+  Credentials get _mCreds => EthPrivateKey.fromHex("TODO");
 
   FreelanceContractClient(this._dapp) {
     _client = Client();
     _ethClient = Web3Client(apiUrl, _client, socketConnector: () {
       return IOWebSocketChannel.connect(wsUrl).cast<String>();
     });
+    initContractAndFunctions();
   }
 
   void dispose() {
@@ -73,8 +75,7 @@ class FreelanceContractClient {
           chains: ['eip155:31337'], // Ethereum chain
           methods: [
             'personal_sign',
-            'eth_signTransaction',
-            'eth_sendTransaction'
+            'eth_signTransaction'
           ], // Requestable Methods, see MethodsConstants for reference
           events: [
             'chainChanged'
@@ -189,6 +190,7 @@ function finalizeProjectBid(uint amount,uint project_id,string memory proposal,b
     public returns (bool _finalized) */
   finalizeProjectBid(BigInt amount, BigInt projectId, String proposal,
       List<String> attachments, EthereumAddress developer) async {
+    _dapp.onSessionExtend.subscribe((args) {});
     return await _ethClient.sendTransaction(
         _mCreds,
         Transaction.callContract(
@@ -365,16 +367,31 @@ function addReview(uint _project_id,string memory _r)
  */
 
   registerDeveloper(
-      String from,
-      String topic,
-      String chainId,
+      Web3App dapp,
+      SessionData session,
       String name,
       String profilePhotoIpfs,
       List<String> techstack,
       String profession) async {
+    //Getting credentials from the provider
+    var credentials = WalletConnectEthereumCredentials(
+      wcClient: dapp,
+      session: session,
+    );
+    final max = await _ethClient.estimateGas(
+      data: _registerDeveloper.encodeCall( [
+        name.bytes32,
+        profilePhotoIpfs.bytes32,
+        techstack.map((e) => e.bytes32).toList(),
+        profession.bytes32
+      ])
+    );
+    debugPrint(max.toString());
 
-    final Transaction t = Transaction.callContract(  contract: _contract,
+    var txn =  Transaction.callContract(
+        contract: _contract,
         function: _registerDeveloper,
+        maxGas: max.toInt(),
         parameters: [
           name.bytes32,
           profilePhotoIpfs.bytes32,
@@ -382,39 +399,14 @@ function addReview(uint _project_id,string memory _r)
           profession.bytes32
         ]);
 
-debugPrint("---------------------------------------------------------------------------------");
-    var s =  await  EIP155.ethSendTransaction(
-        w3mService: _dapp,
-        topic: topic,
-        chainId: chainId,
-        transaction: EthereumTransaction(
-            from: from,
-            to: _contract.address.hex,
-          data: c.hex.encode(List<int>.from(t.data!))
-          , value: "0x"),
-        method: EIP155UIMethods.ethSendTransaction.name);
-    debugPrint(s);
-    return s;
-    // debugPrint("---------------------------------------------------------------------------------");
-    // return   (await _ethClient.call(
-    //     contract: _contract, function: _registerDeveloper, params: [
-    //   name.bytes32,
-    //   profilePhotoIpfs.bytes32,
-    //   techstack.map((e) => e.bytes32).toList(),
-    //   profession.bytes32
-    // ]));
-//     return await _ethClient.sendTransaction(
-//         _mCreds,
-//         Transaction.callContract(
-//             contract: _contract,
-//             function: _registerDeveloper,
-//             parameters: [
-//               name.bytes32,
-//               profilePhotoIpfs.bytes32,
-//               techstack.map((e) => e.bytes32).toList(),
-//               profession.bytes32
-//             ]),
-//         chainId: 31337);
+
+
+    var r  =  await _ethClient.sendTransaction(
+        credentials,
+       txn);
+    debugPrint(r);
+
+    return r;
   }
 
   /*

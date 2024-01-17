@@ -159,7 +159,8 @@ class _HomePageState extends State<HomePage> {
                       await Future.delayed(Durations.extralong4);
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
-                    bidsFuture: store.getApprovedBidsOfDev(context.read<W3MService>().address!),
+                    bidsFuture: store.getApprovedBidsOfDev(
+                        context.read<W3MService>().address!),
                     btnText: "Agree & Confirm")));
           },
           imagePath: ImageConstant.imgNotification,

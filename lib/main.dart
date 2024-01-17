@@ -8,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ipfs_client_flutter/ipfs_client_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart'as ul;
+import 'package:url_launcher/url_launcher.dart' as ul;
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
@@ -51,34 +51,25 @@ class _MyAppState extends State<MyApp> {
   late W3MService _web3Service;
 
   Future<bool> initWeb3WalletConnect() async {
-    final dapp  =await  Web3App.createInstance(   projectId: projectId,
-
-      metadata: const PairingMetadata(
-        name: 'Web3Freelancer',
-        description: 'Web3Modal Flutter SignIn',
-        url: 'https://www.walletconnect.com/',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
-        redirect: Redirect(
-          native: 'web3freelancer://',
-          universal: 'https://www.walletconnect.com',
-        ),
-      ),);
-
+    const meta = const PairingMetadata(
+      name: 'Web3Freelancer',
+      description: 'Web3Modal Flutter SignIn',
+      url: 'https://www.walletconnect.com/',
+      icons: ['https://walletconnect.com/walletconnect-logo.png'],
+      redirect: Redirect(
+        native: 'web3freelancer://',
+        universal: 'https://www.walletconnect.com',
+      ),
+    );
+    final dapp = await Web3App.createInstance(
+      projectId: projectId,
+      metadata: meta,
+    );
 
     _web3Service = W3MService(
       projectId: projectId,
       web3App: dapp,
-
-      metadata: const PairingMetadata(
-        name: 'Web3Freelancer',
-        description: 'Web3Modal Flutter SignIn',
-        url: 'https://www.walletconnect.com/',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
-        redirect: Redirect(
-          native: 'web3freelancer://',
-          universal: 'https://www.walletconnect.com',
-        ),
-      ),
+      metadata: meta,
     );
     W3MChainPresets.chains.putIfAbsent(
         "31337",
@@ -90,10 +81,7 @@ class _MyAppState extends State<MyApp> {
               rpcUrl: apiUrl,
             ));
 
-
-
     await _web3Service.init();
-
 
     contract = FreelanceContractClient(dapp);
 //     var resp = await contract.approveMethods();
@@ -142,16 +130,14 @@ class _MyAppState extends State<MyApp> {
 
 class TempGateway extends StatelessWidget {
   final W3MService web3service;
-   TempGateway(this.web3service, {super.key});
+  TempGateway(this.web3service, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Choose Role"),
-        actions: [
-          W3MConnectWalletButton(service: web3service)
-        ],
+        actions: [W3MConnectWalletButton(service: web3service)],
       ),
       body: SizedBox(
         width: context.screenWidth,
@@ -160,38 +146,37 @@ class TempGateway extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               FilledButton(
-                  onPressed: ()async {
-                    final dev = await context.read<FreelanceContractClient>()
-                                  .isDevRegistered();
+                  onPressed: () async {
+                    final dev = await context
+                        .read<FreelanceContractClient>()
+                        .isDevRegistered();
                     debugPrint("${web3service.address!} : $dev");
 
-                    if(web3service.isConnected ){
-                      if(!dev)
-                      Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => DevRegistrationScreen()));
+                    if (web3service.isConnected) {
+                      if (!dev)
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DevRegistrationScreen()));
                       else
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => HomePage()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => HomePage()));
                     }
-
                   },
                   child: const Text("Find Work")),
               FilledButton(
-                  onPressed: () async{
-                    final po = await context.read<FreelanceContractClient>()
+                  onPressed: () async {
+                    final po = await context
+                        .read<FreelanceContractClient>()
                         .isPORegistered();
                     debugPrint("${web3service.address!} : $po");
 
-                    if(web3service.isConnected ){
-                      if(!po)
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => OwnerRegistrationScreen()));
+                    if (web3service.isConnected) {
+                      if (!po)
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => OwnerRegistrationScreen()));
                       else
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => OwnerProjectsScreen()));
                     }
-
-
                   },
                   child: const Text("Upload Project")),
             ]),
