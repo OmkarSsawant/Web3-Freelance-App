@@ -134,11 +134,8 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
   void _register(BuildContext context) async {
     if (fileReqUploaded) {
       final contract = context.read<FreelanceContractClient>();
-      final s = context.read<W3MService>();
 
       var txn = await contract.registerDeveloper(
-          s.web3App as Web3App,
-          s.session!,
           _nameEC.text,
           profilePhotoIPFS ?? "TODO",
           _techStacksEC.text.trim().split(','),
