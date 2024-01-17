@@ -62,7 +62,7 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
             onTap: (p) {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ProjectStatusScreen(
-                      isOwner: projectOwnerCred.address.hex == p.owner,
+                      isOwner: context.read<W3MService>().address == p.owner,
                       projectId: p.id)));
             },
             btnText: "Update Status"),
@@ -95,7 +95,7 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
   }
 
   _chooseBid(BuildContext context, FirestoreSaver store, Bid b) async {
-    await store.approveBid(b, projectOwnerCred.address.hex);
+    await store.approveBid(b, context.read<W3MService>().address!);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("Bid Approved for ${b.bidder}")));
     await Future.delayed(Durations.extralong4);
@@ -105,13 +105,13 @@ class _OwnerProjectsScreenState extends State<OwnerProjectsScreen>
   void loadProjects() async {
     final contract = context.read<FreelanceContractClient>();
     final store = context.read<FirestoreSaver>();
-    var ps = (await contract.getProjectsOfOwner(projectOwnerCred.address))[0];
+    var ps = (await contract.getProjectsOfOwner(EthereumAddress.fromHex(context.read<W3MService>().address!)))[0];
     var allProjects = List.from(ps).map(Project.fromBlockchain).toList();
     debugPrint(allProjects.toString());
     _allPendingBid =
-        await store.getAllPendingBidsOfOwner(projectOwnerCred.address.hex);
+        await store.getAllPendingBidsOfOwner(context.read<W3MService>().address!);
     _allApprovedBid =
-        await store.getAllApprovedBidsOfOwner(projectOwnerCred.address.hex);
+        await store.getAllApprovedBidsOfOwner(context.read<W3MService>().address!);
     var apIds = _allApprovedBid.map((e) => e.projectId).toList();
     var ppIds = _allPendingBid.map((e) => e.projectId).toList();
     debugPrint(apIds.toString());

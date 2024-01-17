@@ -53,6 +53,7 @@ dependencies:
   open_filex: ^4.3.4
   ipfs_client_flutter: ^1.0.7
   web3modal_flutter: ^3.0.21
+  walletconnect_flutter_v2: ^2.1.13
 dev_dependencies:
   flutter_test:
     sdk: flutter

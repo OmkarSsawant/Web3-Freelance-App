@@ -8,6 +8,8 @@ import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
 import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class DevRegistrationScreen extends StatefulWidget {
 
@@ -135,7 +137,11 @@ class _DevRegistrationScreenState extends State<DevRegistrationScreen> {
   void _register(BuildContext context) async {
     if (fileReqUploaded) {
       final contract = context.read<FreelanceContractClient>();
+      final s = context.read<W3MService>();
       var txn = await contract.registerDeveloper(
+        s.address!,
+        s.session!.topic,
+       "eip155:${s.selectedChain!.chainId}",
           _nameEC.text,
           profilePhotoIPFS ?? "TODO",
           _techStacksEC.text.trim().split(','),

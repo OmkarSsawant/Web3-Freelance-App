@@ -106,7 +106,7 @@ class _ChatPageState extends State<ChatPage> {
         loading = true;
       });
       store?.uploadMessagePdfFile(
-          projectOwnerCred.address.hex, result.files[0].bytes!, (uri) {
+          _user.id, result.files[0].bytes!, (uri) {
         final message = types.FileMessage(
           author: _user,
           createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -139,8 +139,8 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         loading = true;
       });
-      store?.uploadMessageImageFile(bytes, projectOwnerCred.address.hex,
-          projectOwnerCred.address.hex, result, (uri) {
+      store?.uploadMessageImageFile(bytes, _user.id,
+           result, (uri) {
         final message = types.ImageMessage(
           author: _user,
           createdAt: DateTime.now().millisecondsSinceEpoch,

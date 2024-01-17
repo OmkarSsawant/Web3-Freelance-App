@@ -10,6 +10,7 @@ import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
 import '../home_page/widgets/eightyeight_item_widget.dart';
 import '../home_page/widgets/frame_item_widget.dart';
@@ -158,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                       await Future.delayed(Durations.extralong4);
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
-                    bidsFuture: store.getApprovedBidsOfDev(creds.address.hex),
+                    bidsFuture: store.getApprovedBidsOfDev(context.read<W3MService>().address!),
                     btnText: "Agree & Confirm")));
           },
           imagePath: ImageConstant.imgNotification,
@@ -259,7 +260,7 @@ class _HomePageState extends State<HomePage> {
         onGoing = projects
             .where((it) =>
                 it.finalizedBid != null &&
-                it.finalizedBid?.bidder == creds.address.hex)
+                it.finalizedBid?.bidder == context.read<W3MService>().address!)
             .toList();
         setState(() {});
 

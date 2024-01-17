@@ -9,6 +9,7 @@ import 'package:web3_freelancer/presentation/developer/job_details_page/job_deta
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
 import '../job_details_tab_container_screen/widgets/framefive_item_widget.dart';
 import '../job_details_tab_container_screen/widgets/jobdetailstabcontainer_item_widget.dart';
@@ -389,7 +390,7 @@ Future<bool?> showPlaceBid(BuildContext context, Project project) async {
                           attachments: attachments);
                       try {
                         debugPrint("Placing Bid");
-                        await store.placeBid(bid);
+                        await store.placeBid(bid,context.read<W3MService>().address!);
                         Navigator.of(context).pop(true);
                         await showDialog(
                             context: context,

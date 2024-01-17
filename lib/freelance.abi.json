@@ -89,6 +89,55 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_techstack",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_ssrdoc_ipfs",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "_eligiblity_criteria",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_roles",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_works",
+        "type": "string[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_pays",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "addProjectDetails",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_project_id",
         "type": "uint256"
@@ -113,100 +162,29 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "_title",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_project_type",
+        "type": "bytes32"
+      },
+      {
         "internalType": "uint256",
-        "name": "_project_id",
+        "name": "_deadline",
         "type": "uint256"
       },
       {
-        "internalType": "string[]",
-        "name": "_works",
-        "type": "string[]"
+        "internalType": "uint256",
+        "name": "_deposit_budget",
+        "type": "uint256"
       },
       {
-        "internalType": "uint256[]",
-        "name": "_pays",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addWorksAndPays",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "title",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "project_type",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadline",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deposit_budget",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "short_desc",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "description",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes32[]",
-            "name": "techstack",
-            "type": "bytes32[]"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "ssrdoc_ipfs",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "string",
-            "name": "eligibility_criteria",
-            "type": "string"
-          },
-          {
-            "internalType": "string[]",
-            "name": "roles",
-            "type": "string[]"
-          },
-          {
-            "internalType": "string[]",
-            "name": "works",
-            "type": "string[]"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "pays",
-            "type": "uint256[]"
-          }
-        ],
-        "internalType": "struct Freelance.ProjectData",
-        "name": "pd",
-        "type": "tuple"
+        "internalType": "string",
+        "name": "_short_desc",
+        "type": "string"
       }
     ],
     "name": "createProject",
@@ -723,6 +701,32 @@
         "internalType": "uint256",
         "name": "_totalDeposit",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isDevRegistered",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isOwnerRegisered",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

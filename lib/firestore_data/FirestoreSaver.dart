@@ -15,14 +15,14 @@ import 'package:web3_freelancer/web3/freelance_client.dart';
 class FirestoreSaver {
   FirebaseFirestore get store => FirebaseFirestore.instance;
   FirebaseStorage get fileStore => FirebaseStorage.instance;
-  Future placeBid(Bid b) async {
+  Future placeBid(Bid b,String u) async {
     return await store
         .collection("owners")
         .doc(b.owner)
         .collection("projects")
         .doc(b.projectId.toString())
         .collection("bids")
-        .doc(creds.address.hex)
+        .doc(u)
         .set(b.toJson());
   }
 
@@ -174,7 +174,7 @@ class FirestoreSaver {
         .whenComplete(() async => onUploaded(await ref.getDownloadURL()));
   }
 
-  void uploadMessageImageFile(Uint8List bytes, String user, String hex,
+  void uploadMessageImageFile(Uint8List bytes, String user,
       XFile file, Function(String uri) onUploaded) async {
     String path =
         "msg-images/${DateTime.now().millisecondsSinceEpoch}.${file.mimeType?.split('/')[1]}";

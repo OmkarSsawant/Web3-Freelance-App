@@ -6,6 +6,7 @@ import 'package:web3_freelancer/presentation/developer/home_page/home_page.dart'
 import 'package:web3_freelancer/utils.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
 import 'fulltime1_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -118,7 +119,7 @@ class ProjectRecommendationTileWidget extends StatelessWidget {
                                               builder: (context) => ChatPage(
                                                   projectId: project.id,
                                                   other: project.owner,
-                                                  me: creds.address.hex)));
+                                                  me: context.read<W3MService>().address!)));
                                     },
                                     icon:
                                         const Icon(Icons.chat_bubble_rounded)),

@@ -1,7 +1,9 @@
+import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
 import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -130,7 +132,7 @@ class ProjectTileWidget extends StatelessWidget {
                                         MaterialPageRoute(
                                             builder: (context) => ChatPage(
                                                 projectId: project.id,
-                                                other: creds.address.hex,
+                                                other: context.read<W3MService>().address!,
                                                 me: project.owner)));
                                   },
                                   icon: const Icon(Icons.chat_bubble_rounded)),
