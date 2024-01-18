@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
@@ -333,7 +334,7 @@ Future<bool?> showPlaceBid(BuildContext context, Project project) async {
                       hintText: "0.01",
                       labelText: "Amount",
                       helperText: "Amount should be in eth",
-                      prefixIcon: const Icon(Icons.currency_bitcoin_rounded)),
+                      prefixIcon:  SvgPicture.asset("assets/images/eth.svg",width: 20,)),
                   autocorrect: false,
                   controller: _editTextCtlr,
                   keyboardType: TextInputType.number,

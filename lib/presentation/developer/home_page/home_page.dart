@@ -6,6 +6,7 @@ import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/data/model/project_details.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/common/empty_list.dart';
 import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/utils.dart';
@@ -13,8 +14,8 @@ import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
-import '../home_page/widgets/eightyeight_item_widget.dart';
-import '../home_page/widgets/frame_item_widget.dart';
+import '../home_page/widgets/project_tile.dart';
+import '../home_page/widgets/recommen_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/widgets/app_bar/appbar_leading_circleimage.dart';
@@ -198,7 +199,7 @@ class _HomePageState extends State<HomePage> {
       alignment: Alignment.centerRight,
       child: SizedBox(
         height: context.screenHeight * 0.3,
-        child: ListView.separated(
+        child: onGoing.isNotEmpty ?  ListView.separated(
           padding: EdgeInsets.only(left: 24),
           scrollDirection: Axis.horizontal,
           separatorBuilder: (
@@ -215,7 +216,7 @@ class _HomePageState extends State<HomePage> {
               project: onGoing[index],
             );
           },
-        ),
+        ) : Center(child: Image.asset("assets/images/no_work.png",width: 200,),),
       ),
     );
   }
@@ -227,7 +228,8 @@ class _HomePageState extends State<HomePage> {
       alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: ListView.builder(
+        child:  projects.isNotEmpty
+         ? ListView.builder(
           itemCount: projects.length,
           itemBuilder: (context, index) {
             return Padding(
@@ -259,7 +261,8 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           },
-        ),
+        ) : EmptyList(text: "No Project Yet")
+        ,
       ),
     );
   }

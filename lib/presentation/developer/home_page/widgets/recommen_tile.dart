@@ -8,7 +8,6 @@ import 'package:web3_freelancer/web3/freelance_client.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
-import 'fulltime1_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/widgets/custom_icon_button.dart';

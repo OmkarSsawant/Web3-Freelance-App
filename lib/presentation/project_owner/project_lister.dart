@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:web3_freelancer/data/model/bid.dart';
 import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/firestore_data/FirestoreSaver.dart';
+import 'package:web3_freelancer/presentation/common/empty_list.dart';
 import 'package:web3_freelancer/presentation/common/project_status_screen.dart';
-import 'package:web3_freelancer/presentation/developer/home_page/widgets/eightyeight_item_widget.dart';
+import 'package:web3_freelancer/presentation/developer/home_page/widgets/project_tile.dart';
 import 'package:web3_freelancer/presentation/project_owner/bid_chooser.dart';
 import 'package:web3_freelancer/presentation/project_owner/project_create.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
@@ -147,7 +148,7 @@ class ProjectsViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return  projects.isNotEmpty ?  SizedBox(
       child: ListView.builder(
         itemBuilder: (context, i) {
           return ProjectTileWidget(
@@ -158,6 +159,7 @@ class ProjectsViewer extends StatelessWidget {
         },
         itemCount: projects.length,
       ),
-    );
+    ) : EmptyList(text: "No Projects in this Stage");
+
   }
 }

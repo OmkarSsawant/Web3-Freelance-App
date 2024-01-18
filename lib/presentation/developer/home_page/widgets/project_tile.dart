@@ -3,9 +3,9 @@ import 'package:web3_freelancer/data/model/project.dart';
 import 'package:web3_freelancer/presentation/common/chat_screen.dart';
 import 'package:web3_freelancer/presentation/developer/project_details_page/job_details_tab_container_screen/job_details_tab_container_screen.dart';
 import 'package:web3_freelancer/web3/freelance_client.dart';
+import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 
-import 'fulltime3_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web3_freelancer/core/app_export.dart';
 import 'package:web3_freelancer/widgets/custom_icon_button.dart';
@@ -80,17 +80,12 @@ class ProjectTileWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgComponent3,
-                          height: 24,
-                          width: 24,
-                          margin: EdgeInsets.only(bottom: 22),
-                        ),
+
                       ],
                     ),
                     SizedBox(height: 12),
                     Text(
-                      "${project.deposit}\t eth",
+                      "${EtherAmount.fromBigInt(EtherUnit.wei, project.deposit).getValueInUnit(EtherUnit.ether)}\t eth",
                       style: theme.textTheme.labelLarge,
                     ),
                     SizedBox(height: 13),
